@@ -15,13 +15,9 @@ Demo: http://cheton.github.io/react-infinite-tree
 * A rich set of [APIs](https://github.com/cheton/infinite-tree#api-documentation)
 
 ## Browser Support
-![Chrome](https://raw.github.com/alrra/browser-logos/master/chrome/chrome_48x48.png)<br>Chrome | ![Edge](https://raw.github.com/alrra/browser-logos/master/edge/edge_48x48.png)<br>Edge | ![Firefox](https://raw.github.com/alrra/browser-logos/master/firefox/firefox_48x48.png)<br>Firefox | ![IE](https://raw.github.com/alrra/browser-logos/master/internet-explorer/internet-explorer_48x48.png)<br>IE |
-![Opera](https://raw.github.com/alrra/browser-logos/master/opera/opera_48x48.png)<br>Opera | ![Safari](https://raw.github.com/alrra/browser-logos/master/safari/safari_48x48.png)<br>Safari
+![Chrome](https://raw.github.com/alrra/browser-logos/master/chrome/chrome_48x48.png)<br>Chrome | ![Edge](https://raw.github.com/alrra/browser-logos/master/edge/edge_48x48.png)<br>Edge | ![Firefox](https://raw.github.com/alrra/browser-logos/master/firefox/firefox_48x48.png)<br>Firefox | ![IE](https://raw.github.com/alrra/browser-logos/master/internet-explorer/internet-explorer_48x48.png)<br>IE | ![Opera](https://raw.github.com/alrra/browser-logos/master/opera/opera_48x48.png)<br>Opera | ![Safari](https://raw.github.com/alrra/browser-logos/master/safari/safari_48x48.png)<br>Safari
 --- | --- | --- | --- | --- | --- |
  Yes | Yes | Yes| 9+ | Yes | Yes | 
-
-## Notice
-<i>The project is under heavy development and a lot of things are changing. Stay tuned for further updates.</i>
 
 ## Installation
 ```bash
@@ -29,17 +25,33 @@ npm install --save react react-dom infinite-tree
 npm install --save react-infinite-tree
 ```
 
-## Usage
+## Example
 ```jsx
 import React from 'react';
 import InfiniteTree from 'react-infinite-tree';
 import 'react-infinite-tree/dist/react-infinite-tree.css';
 
+const data = {
+    id: 'fruit',
+    label: 'Fruit',
+    children: [{
+        id: 'apple',
+        label: 'Apple'
+    }, {
+        id: 'banana',
+        label: 'Banana',
+        children: [{
+            id: 'cherry',
+            label: 'Cherry',
+            loadOnDemand: true
+        }]
+    }]
+};
+
 class App extends React.Component {
     tree = null;
 
     componentDidMount() {
-        const data = generateData();
         this.tree.loadData(data);
 
         // Select the first node
@@ -103,7 +115,7 @@ class App extends React.Component {
 
 ## API Documentation
 
-Check out API documentation from [infinite-tree](https://github.com/cheton/infinite-tree/wiki):
+Check out API documentation at [infinite-tree](https://github.com/cheton/infinite-tree/wiki):
 
 * [Options](https://github.com/cheton/react-infinite-tree/wiki/Options)
 * [Functions: Tree](https://github.com/cheton/react-infinite-tree/wiki/Functions:-Tree)

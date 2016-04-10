@@ -7,7 +7,7 @@ const lcfirst = (str) => {
     return str.charAt(0).toLowerCase() + str.substr(1);
 };
 
-export default class extends React.Component {
+module.exports = class extends React.Component {
     tree = null;
 
     eventHandlers = {
@@ -56,4 +56,4 @@ export default class extends React.Component {
             <div className={this.props.className}>{this.props.children}</div>
         );
     }
-}
+};

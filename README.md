@@ -80,8 +80,8 @@ class App extends React.Component {
                             done(null, nodes);
                         }, 1000);
                     }}
-                    selectable={true} // Defaults to true
-                    shouldSelectNode={(node) => { // Defaults to null
+                    selectable={true}
+                    shouldSelectNode={(node) => {
                         if (!node || (node === this.tree.getSelectedNode())) {
                             return false; // Prevent from deselecting the current node
                         }

@@ -1,0 +1,69 @@
+{
+  "name": "react-infinite-tree",
+  "version": "0.1.0",
+  "description": "The infinite-tree library for React.",
+  "main": "lib/index.js",
+  "scripts": {
+    "prepublish": "npm run lint && npm test && npm run build && npm run dist && npm run stylus && npm run build-examples && npm run release",
+    "build": "babel --out-dir ./lib ./src",
+    "build-examples": "cd examples; webpack",
+    "test": "./babel-tap --coverage test/*.js",
+    "dist": "webpack; BUILD_ENV=dist webpack",
+    "release": "mkdir -p releases; cp -f dist/react-infinite-tree.css releases/react-infinite-tree-${npm_package_version}.css; cp -f dist/react-infinite-tree.js releases/react-infinite-tree-${npm_package_version}.js; cp -f dist/react-infinite-tree.min.js releases/react-infinite-tree-${npm_package_version}.min.js",
+    "lint": "npm run eslint && npm run stylint",
+    "eslint": "eslint ./src",
+    "eslint:fix": "eslint --fix ./src",
+    "stylint": "stylint src/*.styl",
+    "stylus": "stylus -u nib < src/index.styl > dist/react-infinite-tree.css",
+    "coveralls": "./babel-tap --coverage --coverage-report=text-lcov test/*.js | node_modules/.bin/coveralls",
+    "webpack-dev-server": "cd examples; webpack-dev-server --hot --inline --host 0.0.0.0 --port 8000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cheton/react-infinite-tree.git"
+  },
+  "author": "Cheton Wu <cheton@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cheton/react-infinite-tree/issues"
+  },
+  "homepage": "https://github.com/cheton/react-infinite-tree",
+  "keywords": [
+    "react",
+    "react-component",
+    "infinite-tree",
+    "flat",
+    "flatten",
+    "flattree",
+    "large",
+    "scroll",
+    "tree"
+  ],
+  "peerDependencies": {
+    "react": "^0.14.0 || ^15.0.0-0",
+    "react-dom": "^0.14.0 || ^15.0.0-0",
+    "infinite-tree": "*"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "babel-cli": "^6.7.5",
+    "babel-core": "^6.7.5",
+    "babel-eslint": "^6.0.2",
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2015": "^6.6.0",
+    "babel-preset-react": "^6.5.0",
+    "babel-preset-stage-0": "^6.5.0",
+    "coveralls": "^2.11.9",
+    "css-loader": "^0.23.1",
+    "eslint": "^2.7.0",
+    "eslint-config-airbnb": "^6.2.0",
+    "eslint-plugin-react": "^4.3.0",
+    "nib": "^1.1.0",
+    "style-loader": "^0.13.1",
+    "stylus": "^0.54.2",
+    "stylus-loader": "^2.0.0",
+    "tap": "^5.7.0",
+    "webpack": "^1.12.14",
+    "webpack-dev-server": "^1.14.1"
+  }
+}

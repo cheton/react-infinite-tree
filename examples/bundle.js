@@ -20197,10 +20197,6 @@
 
 	'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	var _react = __webpack_require__(1);
@@ -20230,21 +20226,21 @@
 	    return str.charAt(0).toLowerCase() + str.substr(1);
 	};
 	
-	var _class = function (_React$Component) {
-	    _inherits(_class, _React$Component);
+	module.exports = function (_React$Component) {
+	    _inherits(_class2, _React$Component);
 	
-	    function _class() {
+	    function _class2() {
 	        var _Object$getPrototypeO;
 	
 	        var _temp, _this, _ret;
 	
-	        _classCallCheck(this, _class);
+	        _classCallCheck(this, _class2);
 	
 	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
 	            args[_key] = arguments[_key];
 	        }
 	
-	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(_class)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.tree = null, _this.eventHandlers = {
+	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(_class2)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.tree = null, _this.eventHandlers = {
 	            onUpdate: null,
 	            onOpenNode: null,
 	            onCloseNode: null,
@@ -20254,7 +20250,7 @@
 	        }, _temp), _possibleConstructorReturn(_this, _ret);
 	    }
 	
-	    _createClass(_class, [{
+	    _createClass(_class2, [{
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
 	            var _this2 = this;
@@ -20309,10 +20305,8 @@
 	        }
 	    }]);
 	
-	    return _class;
+	    return _class2;
 	}(_react2.default.Component);
-	
-	exports.default = _class;
 
 /***/ },
 /* 168 */

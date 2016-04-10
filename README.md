@@ -18,8 +18,7 @@ Demo: http://cheton.github.io/react-infinite-tree
 ![Chrome](https://raw.github.com/alrra/browser-logos/master/chrome/chrome_48x48.png)<br>Chrome | ![Edge](https://raw.github.com/alrra/browser-logos/master/edge/edge_48x48.png)<br>Edge | ![Firefox](https://raw.github.com/alrra/browser-logos/master/firefox/firefox_48x48.png)<br>Firefox | ![IE](https://raw.github.com/alrra/browser-logos/master/internet-explorer/internet-explorer_48x48.png)<br>IE |
 ![Opera](https://raw.github.com/alrra/browser-logos/master/opera/opera_48x48.png)<br>Opera | ![Safari](https://raw.github.com/alrra/browser-logos/master/safari/safari_48x48.png)<br>Safari
 --- | --- | --- | --- | --- | --- |
- Yes | Yes | Yes| 8+ | Yes | Yes | 
- Need to include [es5-shim](https://github.com/es-shims/es5-shim#example-of-applying-es-compatability-shims-in-a-browser-project) polyfill for IE8
+ Yes | Yes | Yes| 9+ | Yes | Yes | 
 
 ## Notice
 <i>The project is under heavy development and a lot of things are changing. Stay tuned for further updates.</i>

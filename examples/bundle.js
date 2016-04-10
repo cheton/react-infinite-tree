@@ -20142,7 +20142,7 @@
 	                null,
 	                _react2.default.createElement(_src2.default, {
 	                    ref: function ref(c) {
-	                        return _this2.tree = c.getTree();
+	                        return _this2.tree = c.tree;
 	                    },
 	                    autoOpen: true,
 	                    droppable: true,
@@ -20297,16 +20297,6 @@
 	
 	            this.tree.destroy();
 	            this.tree = null;
-	        }
-	    }, {
-	        key: 'componentWillReceiveProps',
-	        value: function componentWillReceiveProps(nextProps) {
-	            console.log(this.props, nextProps);
-	        }
-	    }, {
-	        key: 'getTree',
-	        value: function getTree() {
-	            return this.tree;
 	        }
 	    }, {
 	        key: 'render',

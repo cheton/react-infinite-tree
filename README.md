@@ -63,7 +63,6 @@ class App extends React.Component {
                 <InfiniteTree
                     ref={(c) => this.tree = c.tree}
                     autoOpen={true}
-                    droppable={true}
                     loadNodes={(parentNode, done) => {
                         const suffix = parentNode.id.replace(/(\w)+/, '');
                         const nodes = [
@@ -87,24 +86,18 @@ class App extends React.Component {
                         }
                         return true;
                     }}
-                    onDropNode={(node, e) => {
-                        const source = e.dataTransfer.getData('text');
-                        document.querySelector('#dropped-result').innerHTML = 'Dropped to <b>' + quoteattr(node.label) + '</b>';
-                    }}
                     onOpenNode={(node) => {
                         console.log('open node:', node);
                     }}
                     onCloseNode={(node) => {
                         console.log('close node:', node);
                     }}
-                    onScrollProgress={(progress) => {
-                        document.querySelector('#scrolling-progress').style.width = progress + '%';
-                    }}
                     onSelect={(node) => {
                         console.log('select node:', node);
                     }}
-                    onUpdate={() => {
-                        console.log(this.tree.getSelectedNode());
+                    onContentWillUpdate={() => {
+                    }}
+                    onContentDidUpdate={() => {
                     }}
                 />
             </div>

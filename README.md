@@ -33,16 +33,16 @@ import 'react-infinite-tree/dist/react-infinite-tree.css';
 
 const data = {
     id: 'fruit',
-    label: 'Fruit',
+    name: 'Fruit',
     children: [{
         id: 'apple',
-        label: 'Apple'
+        name: 'Apple'
     }, {
         id: 'banana',
-        label: 'Banana',
+        name: 'Banana',
         children: [{
             id: 'cherry',
-            label: 'Cherry',
+            name: 'Cherry',
             loadOnDemand: true
         }]
     }]
@@ -68,11 +68,11 @@ class App extends React.Component {
                         const nodes = [
                             {
                                 id: 'node1' + suffix,
-                                label: 'Node 1'
+                                name: 'Node 1'
                             },
                             {
                                 id: 'node2' + suffix,
-                                label: 'Node 2'
+                                name: 'Node 2'
                             }
                         ];
                         setTimeout(() => {

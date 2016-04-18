@@ -1,4 +1,4 @@
-/*! react-infinite-tree v0.1.0 | (c) 2016 Cheton Wu <cheton@gmail.com> | MIT | https://github.com/cheton/react-infinite-tree */
+/*! react-infinite-tree v0.2.0 | (c) 2016 Cheton Wu <cheton@gmail.com> | MIT | https://github.com/cheton/react-infinite-tree */
 exports["InfiniteTree"] =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -92,12 +92,11 @@ exports["InfiniteTree"] =
 	        }
 
 	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(_class2)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.tree = null, _this.eventHandlers = {
-	            onUpdate: null,
+	            onContentWillUpdate: null,
+	            onContentDidUpdate: null,
 	            onOpenNode: null,
 	            onCloseNode: null,
-	            onSelectNode: null,
-	            onDropNode: null,
-	            onScrollProgress: null
+	            onSelectNode: null
 	        }, _temp), _possibleConstructorReturn(_this, _ret);
 	    }
 
@@ -122,7 +121,7 @@ exports["InfiniteTree"] =
 	                    return;
 	                }
 
-	                var eventName = lcfirst(key.substr(2)); // e.g. onUpdate -> update
+	                var eventName = lcfirst(key.substr(2)); // e.g. onContentWillUpdate -> contentWillUpdate
 	                _this2.eventHandlers[key] = _this2.props[key];
 	                _this2.tree.on(eventName, _this2.eventHandlers[key]);
 	            });

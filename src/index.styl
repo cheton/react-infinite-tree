@@ -1,46 +1,42 @@
 @import 'nib'
 
-/* Change the max-height to suit your needs. */
-.infinite-tree-content {
-    max-height: 400px;
-}
 .infinite-tree {
 }
 .infinite-tree-scroll {
     overflow: auto;
+    max-height: 400px; /* Change the height to suit your needs. */
+}
+.infinite-tree-table {
+    width: 100%;
 }
 .infinite-tree-content {
     // Outline removes default browser's borders for focused element.
     outline: 0;
 
-    .tree-selected.tree-item,
-    .tree-selected.tree-item:hover {
+    .infinite-tree-selected.infinite-tree-item,
+    .infinite-tree-selected.infinite-tree-item:hover {
         background: #deecfd;
         border: 1px solid #0066cc;
     }
-    .tree-item {
+    .infinite-tree-item {
         border: 1px solid transparent;
         cursor: default;
     }
-    .tree-item:hover {
+    .infinite-tree-item:hover {
         background: #f2fdff;
     }
-    .tree-item.highlight {
-        border: 1px dotted #ccc;
-        background-color: #f5f6f7;
-    }
-    .tree-node {
+    .infinite-tree-node {
         position: relative;
     }
-    .tree-toggler {
+    .infinite-tree-toggler {
         color: #666;
         user-select: none;
     }
-    .tree-toggler:hover {
+    .infinite-tree-toggler:hover {
         color: #333;
         text-decoration: none;
     }
-    .tree-title {
+    .infinite-tree-title {
         cursor: pointer;
         user-select: none;
     }

@@ -1,7 +1,7 @@
 import { buildHTML, classNames, quoteattr } from './helper';
 
-const rowRenderer = (node, treeOptions) => {
-    const { id, label, loadOnDemand = false, children, state, props = {} } = node;
+const renderer = (node, treeOptions) => {
+    const { id, name, loadOnDemand = false, children, state, props = {} } = node;
     const droppable = (treeOptions.droppable) && (props.droppable);
     const { depth, open, path, total, loading = false, selected = false } = state;
     const childrenLength = Object.keys(children).length;
@@ -26,13 +26,13 @@ const rowRenderer = (node, treeOptions) => {
     const toggler = buildHTML('a', togglerContent, {
         'class': (() => {
             if (!more && loadOnDemand) {
-                return classNames('tree-toggler', 'tree-closed');
+                return classNames(treeOptions.togglerClass, 'infinite-tree-closed');
             }
             if (more && open) {
-                return classNames('tree-toggler');
+                return classNames(treeOptions.togglerClass);
             }
             if (more && !open) {
-                return classNames('tree-toggler', 'tree-closed');
+                return classNames(treeOptions.togglerClass, 'infinite-tree-closed');
             }
             return '';
         })()
@@ -40,15 +40,15 @@ const rowRenderer = (node, treeOptions) => {
 
     const icon = buildHTML('i', '', {
         'class': classNames(
-            'tree-folder-icon',
+            'infinite-tree-folder-icon',
             'glyphicon',
             { 'glyphicon-folder-open': more && open },
             { 'glyphicon-folder-close': more && !open },
             { 'glyphicon-file': !more }
         )
     });
-    const title = buildHTML('span', quoteattr(label), {
-        'class': classNames('tree-title')
+    const title = buildHTML('span', quoteattr(name), {
+        'class': classNames('infinite-tree-title')
     });
     const loadingIcon = buildHTML('i', '', {
         'style': 'margin-left: 5px',
@@ -63,21 +63,21 @@ const rowRenderer = (node, treeOptions) => {
         'class': 'count'
     });
     const treeNode = buildHTML('div', toggler + icon + title + loadingIcon + count, {
-        'class': 'tree-node',
+        'class': 'infinite-tree-node',
         'style': 'margin-left: ' + depth * 18 + 'px'
     });
 
     let treeNodeAttributes = {
-        'aria-id': id,
-        'aria-expanded': more && open,
-        'aria-depth': depth,
-        'aria-path': path,
-        'aria-selected': selected,
-        'aria-children': childrenLength,
-        'aria-total': total,
+        'data-id': id,
+        'data-expanded': more && open,
+        'data-depth': depth,
+        'data-path': path,
+        'data-selected': selected,
+        'data-children': childrenLength,
+        'data-total': total,
         'class': classNames(
-            'tree-item',
-            { 'tree-selected': selected }
+            'infinite-tree-item',
+            { 'infinite-tree-selected': selected }
         )
     };
     if (droppable) {
@@ -87,4 +87,4 @@ const rowRenderer = (node, treeOptions) => {
     return buildHTML('div', treeNode, treeNodeAttributes);
 };
 
-export default rowRenderer;
+export default renderer;

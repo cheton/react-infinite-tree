@@ -1,4 +1,4 @@
-/*! react-infinite-tree v0.2.0 | (c) 2016 Cheton Wu <cheton@gmail.com> | MIT | https://github.com/cheton/react-infinite-tree */
+/*! react-infinite-tree v0.2.1 | (c) 2016 Cheton Wu <cheton@gmail.com> | MIT | https://github.com/cheton/react-infinite-tree */
 exports["InfiniteTree"] =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -137,7 +137,7 @@ exports["InfiniteTree"] =
 	                }
 
 	                var eventName = lcfirst(key.substr(2)); // e.g. onUpdate -> update
-	                _this3.tree.off(eventName, _this3.eventHandlers[key]);
+	                _this3.tree.removeListener(eventName, _this3.eventHandlers[key]);
 	                _this3.eventHandlers[key] = null;
 	            });
 

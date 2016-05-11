@@ -4,7 +4,7 @@ import App from './app';
 import { addEventListener } from './helper';
 
 // Draggable Element
-const draggableElement = document.querySelector('#draggable-element');
+const draggableElement = document.querySelector('[data-id="draggable-element"]');
 
 // http://stackoverflow.com/questions/5500615/internet-explorer-9-drag-and-drop-dnd
 addEventListener(draggableElement, 'selectstart', (e) => {
@@ -18,7 +18,7 @@ addEventListener(draggableElement, 'dragstart', (e) => {
     e.dataTransfer.effectAllowed = 'move';
     const target = e.target || e.srcElement;
     e.dataTransfer.setData('text', target.id);
-    document.querySelector('#dropped-result').innerHTML = '';
+    document.querySelector('[data-id="dropped-result"]').innerHTML = '';
 });
 
 addEventListener(draggableElement, 'dragend', function(e) {
@@ -26,5 +26,5 @@ addEventListener(draggableElement, 'dragend', function(e) {
 
 ReactDOM.render(
     <App />,
-    document.getElementById('tree')
+    document.querySelector('[data-id="tree"]')
 );

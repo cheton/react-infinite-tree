@@ -33,16 +33,16 @@ import 'react-infinite-tree/dist/react-infinite-tree.css';
 
 const data = {
     id: 'fruit',
-    label: 'Fruit',
+    name: 'Fruit',
     children: [{
         id: 'apple',
-        label: 'Apple'
+        name: 'Apple'
     }, {
         id: 'banana',
-        label: 'Banana',
+        name: 'Banana',
         children: [{
             id: 'cherry',
-            label: 'Cherry',
+            name: 'Cherry',
             loadOnDemand: true
         }]
     }]
@@ -63,17 +63,16 @@ class App extends React.Component {
                 <InfiniteTree
                     ref={(c) => this.tree = c.tree}
                     autoOpen={true}
-                    droppable={true}
                     loadNodes={(parentNode, done) => {
                         const suffix = parentNode.id.replace(/(\w)+/, '');
                         const nodes = [
                             {
                                 id: 'node1' + suffix,
-                                label: 'Node 1'
+                                name: 'Node 1'
                             },
                             {
                                 id: 'node2' + suffix,
-                                label: 'Node 2'
+                                name: 'Node 2'
                             }
                         ];
                         setTimeout(() => {
@@ -87,24 +86,18 @@ class App extends React.Component {
                         }
                         return true;
                     }}
-                    onDropNode={(node, e) => {
-                        const source = e.dataTransfer.getData('text');
-                        document.querySelector('#dropped-result').innerHTML = 'Dropped to <b>' + quoteattr(node.label) + '</b>';
-                    }}
                     onOpenNode={(node) => {
                         console.log('open node:', node);
                     }}
                     onCloseNode={(node) => {
                         console.log('close node:', node);
                     }}
-                    onScrollProgress={(progress) => {
-                        document.querySelector('#scrolling-progress').style.width = progress + '%';
-                    }}
                     onSelect={(node) => {
                         console.log('select node:', node);
                     }}
-                    onUpdate={() => {
-                        console.log(this.tree.getSelectedNode());
+                    onContentWillUpdate={() => {
+                    }}
+                    onContentDidUpdate={() => {
                     }}
                 />
             </div>

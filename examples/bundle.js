@@ -63,7 +63,7 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	// Draggable Element
-	var draggableElement = document.querySelector('#draggable-element');
+	var draggableElement = document.querySelector('[data-id="draggable-element"]');
 	
 	// http://stackoverflow.com/questions/5500615/internet-explorer-9-drag-and-drop-dnd
 	(0, _helper.addEventListener)(draggableElement, 'selectstart', function (e) {
@@ -77,12 +77,12 @@
 	    e.dataTransfer.effectAllowed = 'move';
 	    var target = e.target || e.srcElement;
 	    e.dataTransfer.setData('text', target.id);
-	    document.querySelector('#dropped-result').innerHTML = '';
+	    document.querySelector('[data-id="dropped-result"]').innerHTML = '';
 	});
 	
 	(0, _helper.addEventListener)(draggableElement, 'dragend', function (e) {});
 	
-	_reactDom2.default.render(_react2.default.createElement(_app2.default, null), document.getElementById('tree'));
+	_reactDom2.default.render(_react2.default.createElement(_app2.default, null), document.querySelector('[data-id="tree"]'));
 
 /***/ },
 /* 1 */
@@ -20069,6 +20069,8 @@
 	
 	__webpack_require__(185);
 	
+	__webpack_require__(187);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -20079,9 +20081,9 @@
 	
 	var generateData = function generateData() {
 	    var data = [];
-	    var source = '{"id":"<root>","label":"<root>","props":{"droppable":true},"children":[{"id":"alpha","label":"Alpha","props":{"droppable":true}},{"id":"bravo","label":"Bravo","props":{"droppable":true},"children":[{"id":"charlie","label":"Charlie","props":{"droppable":true},"children":[{"id":"delta","label":"Delta","props":{"droppable":true},"children":[{"id":"echo","label":"Echo","props":{"droppable":true}},{"id":"foxtrot","label":"Foxtrot","props":{"droppable":true}}]},{"id":"golf","label":"Golf","props":{"droppable":true}}]},{"id":"hotel","label":"Hotel","props":{"droppable":true},"children":[{"id":"india","label":"India","props":{"droppable":true},"children":[{"id":"juliet","label":"Juliet","props":{"droppable":true}}]}]},{"id":"kilo","label":"(Load On Demand) Kilo","loadOnDemand":true,"props":{"droppable":true}}]}]}';
+	    var source = '{"id":"<root>","name":"<root>","props":{"droppable":true},"children":[{"id":"alpha","name":"Alpha","props":{"droppable":true}},{"id":"bravo","name":"Bravo","props":{"droppable":true},"children":[{"id":"charlie","name":"Charlie","props":{"droppable":true},"children":[{"id":"delta","name":"Delta","props":{"droppable":true},"children":[{"id":"echo","name":"Echo","props":{"droppable":true}},{"id":"foxtrot","name":"Foxtrot","props":{"droppable":true}}]},{"id":"golf","name":"Golf","props":{"droppable":true}}]},{"id":"hotel","name":"Hotel","props":{"droppable":true},"children":[{"id":"india","name":"India","props":{"droppable":true},"children":[{"id":"juliet","name":"Juliet","props":{"droppable":true}}]}]},{"id":"kilo","name":"(Load On Demand) Kilo","loadOnDemand":true,"props":{"droppable":true}}]}]}';
 	    for (var i = 0; i < 1000; ++i) {
-	        data.push(JSON.parse(source.replace(/"(id|label)":"([^"]*)"/g, '"$1": "$2.' + i + '"')));
+	        data.push(JSON.parse(source.replace(/"(id|name)":"([^"]*)"/g, '"$1": "$2.' + i + '"')));
 	    }
 	    return data;
 	};
@@ -20106,11 +20108,11 @@
 	    _createClass(App, [{
 	        key: 'updatePreview',
 	        value: function updatePreview(node) {
-	            var el = document.querySelector('#preview');
+	            var el = document.querySelector('[data-id="preview"]');
 	            if (node) {
 	                var o = {
 	                    id: node.id,
-	                    label: node.label,
+	                    name: node.name,
 	                    children: node.children ? node.children.length : 0,
 	                    parent: node.parent ? node.parent.id : null,
 	                    state: node.state
@@ -20145,15 +20147,33 @@
 	                        return _this2.tree = c.tree;
 	                    },
 	                    autoOpen: true,
-	                    droppable: true,
+	                    droppable: {
+	                        hoverClass: 'infinite-tree-drop-hover',
+	                        accept: function accept(opts) {
+	                            var type = opts.type;
+	                            var draggableTarget = opts.draggableTarget;
+	                            var droppableTarget = opts.droppableTarget;
+	                            var node = opts.node;
+	
+	                            return true;
+	                        },
+	                        drop: function drop(e, opts) {
+	                            var draggableTarget = opts.draggableTarget;
+	                            var droppableTarget = opts.droppableTarget;
+	                            var node = opts.node;
+	
+	                            var source = e.dataTransfer.getData('text');
+	                            document.querySelector('[data-id="dropped-result"]').innerHTML = 'Dropped to <b>' + (0, _helper.quoteattr)(node.name) + '</b>';
+	                        }
+	                    },
 	                    loadNodes: function loadNodes(parentNode, done) {
 	                        var suffix = parentNode.id.replace(/(\w)+/, '');
 	                        var nodes = [{
 	                            id: 'node1' + suffix,
-	                            label: 'Node 1'
+	                            name: 'Node 1'
 	                        }, {
 	                            id: 'node2' + suffix,
-	                            label: 'Node 2'
+	                            name: 'Node 2'
 	                        }];
 	                        setTimeout(function () {
 	                            done(null, nodes);
@@ -20170,13 +20190,13 @@
 	                    },
 	                    onDropNode: function onDropNode(node, e) {
 	                        var source = e.dataTransfer.getData('text');
-	                        document.querySelector('#dropped-result').innerHTML = 'Dropped to <b>' + (0, _helper.quoteattr)(node.label) + '</b>';
+	                        document.querySelector('[data-id="dropped-result"]').innerHTML = 'Dropped to <b>' + (0, _helper.quoteattr)(node.name) + '</b>';
 	                    },
-	                    onUpdate: function onUpdate() {
+	                    onContentWillUpdate: function onContentWillUpdate() {
+	                        console.log('onContentWillUpdate');
+	                    },
+	                    onContentDidUpdate: function onContentDidUpdate() {
 	                        _this2.updatePreview(_this2.tree.getSelectedNode());
-	                    },
-	                    onScrollProgress: function onScrollProgress(progress) {
-	                        document.querySelector('#scrolling-progress').style.width = progress + '%';
 	                    },
 	                    onSelect: function onSelect(node) {
 	                        _this2.updatePreview(node);
@@ -20241,12 +20261,11 @@
 	        }
 	
 	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(_class2)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.tree = null, _this.eventHandlers = {
-	            onUpdate: null,
+	            onContentWillUpdate: null,
+	            onContentDidUpdate: null,
 	            onOpenNode: null,
 	            onCloseNode: null,
-	            onSelectNode: null,
-	            onDropNode: null,
-	            onScrollProgress: null
+	            onSelectNode: null
 	        }, _temp), _possibleConstructorReturn(_this, _ret);
 	    }
 	
@@ -20271,7 +20290,7 @@
 	                    return;
 	                }
 	
-	                var eventName = lcfirst(key.substr(2)); // e.g. onUpdate -> update
+	                var eventName = lcfirst(key.substr(2)); // e.g. onContentWillUpdate -> contentWillUpdate
 	                _this2.eventHandlers[key] = _this2.props[key];
 	                _this2.tree.on(eventName, _this2.eventHandlers[key]);
 	            });
@@ -20358,34 +20377,27 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var ensureNodeInstance = function ensureNodeInstance(node) {
-	    if (!(node instanceof _flattree.Node)) {
-	        throw new Error('The node must be a Node object.');
+	var error = function error() {
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	        args[_key] = arguments[_key];
 	    }
-	    return true;
+	
+	    if (console && console.error) {
+	        var prefix = '[InfiniteTree]';
+	        console.error.apply(console, [prefix].concat(args));
+	    }
 	};
 	
-	var extend = function extend(target) {
-	    for (var _len = arguments.length, sources = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-	        sources[_key - 1] = arguments[_key];
+	var ensureNodeInstance = function ensureNodeInstance(node) {
+	    if (!node) {
+	        // undefined or null
+	        return false;
 	    }
-	
-	    if (target === undefined || target === null) {
-	        throw new TypeError('Cannot convert undefined or null to object');
+	    if (!(node instanceof _flattree.Node)) {
+	        error('The node must be a Node object.');
+	        return false;
 	    }
-	
-	    var output = Object(target);
-	    for (var index = 0; index < sources.length; index++) {
-	        var source = sources[index];
-	        if (source !== undefined && source !== null) {
-	            for (var key in source) {
-	                if (source.hasOwnProperty(key)) {
-	                    output[key] = source[key];
-	                }
-	            }
-	        }
-	    }
-	    return output;
+	    return true;
 	};
 	
 	var InfiniteTree = function (_events$EventEmitter) {
@@ -20393,12 +20405,8 @@
 	
 	    // Creates new InfiniteTree object.
 	
-	    function InfiniteTree() {
-	        var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-	
+	    function InfiniteTree(el, options) {
 	        _classCallCheck(this, InfiniteTree);
-	
-	        // Assign options
 	
 	        var _this = _possibleConstructorReturn(this, _events$EventEmitter.call(this));
 	
@@ -20406,10 +20414,15 @@
 	            autoOpen: false,
 	            droppable: false,
 	            el: null,
+	            layout: 'div',
 	            loadNodes: null,
+	            noDataClass: 'infinite-tree-no-data',
+	            noDataText: 'No data',
+	            nodeIdAttr: 'data-id',
 	            rowRenderer: _renderer.defaultRowRenderer,
 	            selectable: true,
-	            shouldSelectNode: null
+	            shouldSelectNode: null,
+	            togglerClass: 'infinite-tree-toggler'
 	        };
 	        _this.state = {
 	            openNodes: [],
@@ -20422,11 +20435,12 @@
 	        _this.rows = [];
 	        _this.scrollElement = null;
 	        _this.contentElement = null;
-	        _this.dragoverElement = null;
+	        _this.draggableTarget = null;
+	        _this.droppableTarget = null;
 	        _this.contentListener = {
 	            'click': function click(e) {
 	                var itemTarget = null;
-	                var handleToggler = false;
+	                var clickToggler = false;
 	
 	                (0, _helper.stopPropagation)(e);
 	
@@ -20438,8 +20452,8 @@
 	                }
 	
 	                while (itemTarget && itemTarget.parentElement !== _this.contentElement) {
-	                    if (itemTarget.className.indexOf('tree-toggler') >= 0) {
-	                        handleToggler = true;
+	                    if ((0, _helper.hasClass)(itemTarget, _this.options.togglerClass)) {
+	                        clickToggler = true;
 	                    }
 	                    itemTarget = itemTarget.parentElement;
 	                }
@@ -20448,7 +20462,7 @@
 	                    return;
 	                }
 	
-	                var id = itemTarget.getAttribute('aria-id');
+	                var id = itemTarget.getAttribute(_this.options.nodeIdAttr);
 	                var node = _this.getNodeById(id);
 	
 	                if (!node) {
@@ -20456,12 +20470,33 @@
 	                }
 	
 	                // Click on the toggler to open/close a tree node
-	                if (handleToggler) {
+	                if (clickToggler) {
 	                    _this.toggleNode(node);
 	                    return;
 	                }
 	
 	                _this.selectNode(node);
+	            },
+	            // https://developer.mozilla.org/en-US/docs/Web/Events/dragstart
+	            // The dragstart event is fired when the user starts dragging an element or text selection.
+	            'dragstart': function dragstart(e) {
+	                _this.draggableTarget = e.target || e.srcElement;
+	            },
+	            // https://developer.mozilla.org/en-US/docs/Web/Events/dragend
+	            // The dragend event is fired when a drag operation is being ended (by releasing a mouse button or hitting the escape key).
+	            'dragend': function dragend(e) {
+	                var _this$options$droppab = _this.options.droppable.hoverClass;
+	                var hoverClass = _this$options$droppab === undefined ? '' : _this$options$droppab;
+	
+	                // Draggable
+	
+	                _this.draggableTarget = null;
+	
+	                // Droppable
+	                if (_this.droppableTarget) {
+	                    (0, _helper.removeClass)(_this.droppableTarget, hoverClass);
+	                    _this.droppableTarget = null;
+	                }
 	            },
 	            // https://developer.mozilla.org/en-US/docs/Web/Events/dragenter
 	            // The dragenter event is fired when a dragged element or text selection enters a valid drop target.
@@ -20483,35 +20518,42 @@
 	                    return;
 	                }
 	
-	                if (_this.dragoverElement !== itemTarget) {
-	                    (0, _helper.removeClass)(_this.dragoverElement, 'highlight'); // remove 'highlight' class
-	                    _this.dragoverElement = null;
-	
-	                    if (!itemTarget.hasAttribute('droppable')) {
-	                        return;
-	                    }
-	
-	                    var canDrop = !itemTarget.getAttribute('droppable').match(/false/i);
-	                    if (canDrop) {
-	                        (0, _helper.addClass)(itemTarget, 'highlight');
-	                        _this.dragoverElement = itemTarget;
-	                    }
+	                if (_this.droppableTarget === itemTarget) {
+	                    return;
 	                }
-	            },
-	            // https://developer.mozilla.org/en-US/docs/Web/Events/dragend
-	            // The dragend event is fired when a drag operation is being ended (by releasing a mouse button or hitting the escape key).
-	            'dragend': function dragend(e) {
-	                if (_this.dragoverElement) {
-	                    (0, _helper.removeClass)(_this.dragoverElement, 'highlight'); // remove 'highlight' class
-	                    _this.dragoverElement = null;
+	
+	                var _this$options$droppab2 = _this.options.droppable;
+	                var accept = _this$options$droppab2.accept;
+	                var _this$options$droppab3 = _this$options$droppab2.hoverClass;
+	                var hoverClass = _this$options$droppab3 === undefined ? '' : _this$options$droppab3;
+	
+	
+	                (0, _helper.removeClass)(_this.droppableTarget, hoverClass);
+	                _this.droppableTarget = null;
+	
+	                var canDrop = true; // Defaults to true
+	
+	                if (typeof accept === 'function') {
+	                    var id = itemTarget.getAttribute(_this.options.nodeIdAttr);
+	                    var node = _this.getNodeById(id);
+	
+	                    canDrop = !!accept.call(_this, {
+	                        type: 'dragenter',
+	                        draggableTarget: _this.draggableTarget,
+	                        droppableTarget: itemTarget,
+	                        node: node
+	                    });
+	                }
+	
+	                if (canDrop) {
+	                    (0, _helper.addClass)(itemTarget, hoverClass);
+	                    _this.droppableTarget = itemTarget;
 	                }
 	            },
 	            // https://developer.mozilla.org/en-US/docs/Web/Events/dragover
 	            // The dragover event is fired when an element or text selection is being dragged over a valid drop target (every few hundred milliseconds).
 	            'dragover': function dragover(e) {
 	                (0, _helper.preventDefault)(e);
-	                e.dataTransfer.dropEffect = 'move';
-	                return false;
 	            },
 	            // https://developer.mozilla.org/en-US/docs/Web/Events/drop
 	            // The drop event is fired when an element or text selection is dropped on a valid drop target.
@@ -20519,18 +20561,52 @@
 	                // prevent default action (open as link for some elements)
 	                (0, _helper.preventDefault)(e);
 	
-	                if (_this.dragoverElement) {
-	                    var id = _this.dragoverElement.getAttribute('aria-id');
-	                    var node = _this.getNodeById(id);
-	
-	                    (0, _helper.removeClass)(_this.dragoverElement, 'highlight');
-	                    _this.dragoverElement = null;
-	
-	                    _this.emit('dropNode', node, e);
+	                if (!(_this.draggableTarget && _this.droppableTarget)) {
+	                    return;
 	                }
+	
+	                var _this$options$droppab4 = _this.options.droppable;
+	                var accept = _this$options$droppab4.accept;
+	                var drop = _this$options$droppab4.drop;
+	                var _this$options$droppab5 = _this$options$droppab4.hoverClass;
+	                var hoverClass = _this$options$droppab5 === undefined ? '' : _this$options$droppab5;
+	
+	                var id = _this.droppableTarget.getAttribute(_this.options.nodeIdAttr);
+	                var node = _this.getNodeById(id);
+	
+	                var canDrop = true; // Defaults to true
+	
+	                if (typeof accept === 'function') {
+	                    canDrop = !!accept.call(_this, {
+	                        type: 'drop',
+	                        draggableTarget: _this.draggableTarget,
+	                        droppableTarget: _this.droppableTarget,
+	                        node: node
+	                    });
+	                }
+	
+	                if (canDrop && typeof drop === 'function') {
+	                    drop.call(_this, e, {
+	                        draggableTarget: _this.draggableTarget,
+	                        droppableTarget: _this.droppableTarget,
+	                        node: node
+	                    });
+	                }
+	
+	                (0, _helper.removeClass)(_this.droppableTarget, hoverClass);
+	                _this.droppableTarget = null;
 	            }
 	        };
-	        _this.options = extend({}, _this.options, options);
+	
+	
+	        if ((0, _helper.isDOMElement)(el)) {
+	            options.el = el;
+	        } else {
+	            options = el;
+	        }
+	
+	        // Assign options
+	        _this.options = (0, _helper.extend)({}, _this.options, options);
 	
 	        if (!_this.options.el) {
 	            console.error('Failed to initialize infinite-tree: el is not specified.', options);
@@ -20547,45 +20623,54 @@
 	    }
 	
 	    InfiniteTree.prototype.create = function create() {
-	        var _this2 = this;
-	
 	        if (!this.options.el) {
-	            throw new Error('The element option is not specified.');
+	            error('The element option is not specified.');
 	        }
 	
-	        var scrollElement = document.createElement('div');
-	        scrollElement.className = (0, _helper.classNames)('infinite-tree', 'infinite-tree-scroll');
-	        var contentElement = document.createElement('div');
-	        contentElement.className = (0, _helper.classNames)('infinite-tree', 'infinite-tree-content');
+	        var tag = null;
 	
-	        scrollElement.appendChild(contentElement);
-	        this.options.el.appendChild(scrollElement);
+	        this.scrollElement = document.createElement('div');
+	
+	        if (this.options.layout === 'table') {
+	            var tableElement = document.createElement('table');
+	            tableElement.className = (0, _helper.classNames)('infinite-tree', 'infinite-tree-table');
+	            var contentElement = document.createElement('tbody');
+	            tableElement.appendChild(contentElement);
+	            this.scrollElement.appendChild(tableElement);
+	            this.contentElement = contentElement;
+	
+	            // The tag name for supporting elements
+	            tag = 'tr';
+	        } else {
+	            var _contentElement = document.createElement('div');
+	            this.scrollElement.appendChild(_contentElement);
+	            this.contentElement = _contentElement;
+	
+	            // The tag name for supporting elements
+	            tag = 'div';
+	        }
+	
+	        this.scrollElement.className = (0, _helper.classNames)('infinite-tree', 'infinite-tree-scroll');
+	        this.contentElement.className = (0, _helper.classNames)('infinite-tree', 'infinite-tree-content');
+	
+	        this.options.el.appendChild(this.scrollElement);
 	
 	        this.clusterize = new _clusterize2['default']({
-	            tag: 'div',
+	            tag: tag,
 	            rows: [],
-	            scrollElem: scrollElement,
-	            contentElem: contentElement,
-	            no_data_class: 'infinite-tree-no-data',
-	            callbacks: {
-	                // Will be called right before replacing previous cluster with new one.
-	                clusterWillChange: function clusterWillChange() {},
-	                // Will be called right after replacing previous cluster with new one.
-	                clusterChanged: function clusterChanged() {},
-	                // Will be called on scrolling. Returns progress position.
-	                scrollingProgress: function scrollingProgress(progress) {
-	                    _this2.emit('scrollProgress', progress);
-	                }
-	            }
+	            scrollElem: this.scrollElement,
+	            contentElem: this.contentElement,
+	            no_data_text: this.options.noDataText,
+	            no_data_class: this.options.noDataClass
 	        });
 	
-	        this.scrollElement = scrollElement;
-	        this.contentElement = contentElement;
-	
 	        (0, _helper.addEventListener)(this.contentElement, 'click', this.contentListener.click);
+	
 	        if (this.options.droppable) {
+	            (0, _helper.addEventListener)(document, 'dragstart', this.contentListener.dragstart);
 	            (0, _helper.addEventListener)(document, 'dragend', this.contentListener.dragend);
 	            (0, _helper.addEventListener)(this.contentElement, 'dragenter', this.contentListener.dragenter);
+	            (0, _helper.addEventListener)(this.contentElement, 'dragleave', this.contentListener.dragleave);
 	            (0, _helper.addEventListener)(this.contentElement, 'dragover', this.contentListener.dragover);
 	            (0, _helper.addEventListener)(this.contentElement, 'drop', this.contentListener.drop);
 	        }
@@ -20594,8 +20679,10 @@
 	    InfiniteTree.prototype.destroy = function destroy() {
 	        (0, _helper.removeEventListener)(this.contentElement, 'click', this.contentListener);
 	        if (this.options.droppable) {
+	            (0, _helper.removeEventListener)(document, 'dragstart', this.contentListener.dragstart);
 	            (0, _helper.removeEventListener)(document, 'dragend', this.contentListener.dragend);
 	            (0, _helper.removeEventListener)(this.contentElement, 'dragenter', this.contentListener.dragenter);
+	            (0, _helper.removeEventListener)(this.contentElement, 'dragleave', this.contentListener.dragleave);
 	            (0, _helper.removeEventListener)(this.contentElement, 'dragover', this.contentListener.dragover);
 	            (0, _helper.removeEventListener)(this.contentElement, 'drop', this.contentListener.drop);
 	        }
@@ -20635,7 +20722,7 @@
 	
 	
 	    InfiniteTree.prototype.addChildNodes = function addChildNodes(newNodes, index, parentNode) {
-	        var _this3 = this;
+	        var _this2 = this;
 	
 	        newNodes = [].concat(newNodes || []); // Ensure array
 	        if (newNodes.length === 0) {
@@ -20650,7 +20737,9 @@
 	            parentNode = parentNode || this.state.rootNode; // Defaults to rootNode if not specified
 	        }
 	
-	        ensureNodeInstance(parentNode);
+	        if (!ensureNodeInstance(parentNode)) {
+	            return false;
+	        }
 	
 	        // Assign parent
 	        newNodes.forEach(function (newNode) {
@@ -20666,7 +20755,7 @@
 	        var deleteCount = parentNode.state.total;
 	        var nodes = (0, _flattree.flatten)(parentNode.children, { openNodes: this.state.openNodes });
 	        var rows = nodes.map(function (node) {
-	            return _this3.options.rowRenderer(node, _this3.options);
+	            return _this2.options.rowRenderer(node, _this2.options);
 	        });
 	
 	        if (parentNode === this.state.rootNode) {
@@ -20686,9 +20775,9 @@
 	
 	        // Update the lookup table with newly added nodes
 	        parentNode.children.slice(index).forEach(function (childNode) {
-	            _this3.flattenNode(childNode).forEach(function (node) {
+	            _this2.flattenNode(childNode).forEach(function (node) {
 	                if (node.id !== undefined) {
-	                    _this3.nodeTable.set(node.id, node);
+	                    _this2.nodeTable.set(node.id, node);
 	                }
 	            });
 	        });
@@ -20710,7 +20799,11 @@
 	    InfiniteTree.prototype.appendChildNode = function appendChildNode(newNode, parentNode) {
 	        // Defaults to rootNode if the parentNode is not specified
 	        parentNode = parentNode || this.state.rootNode;
-	        ensureNodeInstance(parentNode);
+	
+	        if (!ensureNodeInstance(parentNode)) {
+	            return false;
+	        }
+	
 	        var index = parentNode.children.length;
 	        var newNodes = [].concat(newNode || []); // Ensure array
 	        return this.addChildNodes(newNodes, index, parentNode);
@@ -20733,12 +20826,15 @@
 	
 	
 	    InfiniteTree.prototype.closeNode = function closeNode(node) {
-	        ensureNodeInstance(node);
+	        if (!ensureNodeInstance(node)) {
+	            return false;
+	        }
 	
 	        // Retrieve node index
 	        var nodeIndex = this.nodes.indexOf(node);
 	        if (nodeIndex < 0) {
-	            throw new Error('Invalid node index');
+	            error('Invalid node index');
+	            return false;
 	        }
 	
 	        // Check if the closeNode action can be performed
@@ -20782,7 +20878,7 @@
 	        // Update the row corresponding to the node
 	        this.rows[nodeIndex] = this.options.rowRenderer(node, this.options);
 	
-	        // Emit the 'closeNode' event
+	        // Emit 'closeNode' event
 	        this.emit('closeNode', node);
 	
 	        // Updates list with new data
@@ -20800,20 +20896,20 @@
 	        // Defaults to rootNode if the parentNode is not specified
 	        parentNode = parentNode || this.state.rootNode;
 	
-	        ensureNodeInstance(parentNode);
+	        if (!ensureNodeInstance(parentNode)) {
+	            return [];
+	        }
 	
 	        var list = [];
-	
-	        // Ignore parent node
-	        var node = parentNode.getFirstChild();
+	        var node = parentNode.getFirstChild(); // Ignore parent node
 	        while (node) {
 	            list.push(node);
 	            if (node.hasChildren()) {
 	                node = node.getFirstChild();
 	            } else {
-	                // find the parent level
+	                // Find the parent level
 	                while (node.getNextSibling() === null && node.parent !== parentNode) {
-	                    // use child-parent link to get to the parent level
+	                    // Use child-parent link to get to the parent level
 	                    node = node.getParent();
 	                }
 	
@@ -20842,7 +20938,9 @@
 	        // Defaults to rootNode if the parentNode is not specified
 	        parentNode = parentNode || this.state.rootNode;
 	
-	        ensureNodeInstance(parentNode);
+	        if (!ensureNodeInstance(parentNode)) {
+	            return [];
+	        }
 	
 	        return parentNode.children;
 	    };
@@ -20894,10 +20992,14 @@
 	
 	
 	    InfiniteTree.prototype.insertNodeAfter = function insertNodeAfter(newNode, referenceNode) {
-	        ensureNodeInstance(referenceNode);
+	        if (!ensureNodeInstance(referenceNode)) {
+	            return false;
+	        }
+	
 	        var parentNode = referenceNode.getParent();
 	        var index = parentNode.children.indexOf(referenceNode) + 1;
 	        var newNodes = [].concat(newNode || []); // Ensure array
+	
 	        return this.addChildNodes(newNodes, index, parentNode);
 	    };
 	    // Inserts the specified node before the reference node.
@@ -20907,10 +21009,14 @@
 	
 	
 	    InfiniteTree.prototype.insertNodeBefore = function insertNodeBefore(newNode, referenceNode) {
-	        ensureNodeInstance(referenceNode);
+	        if (!ensureNodeInstance(referenceNode)) {
+	            return false;
+	        }
+	
 	        var parentNode = referenceNode.getParent();
 	        var index = parentNode.children.indexOf(referenceNode);
 	        var newNodes = [].concat(newNode || []); // Ensure array
+	
 	        return this.addChildNodes(newNodes, index, parentNode);
 	    };
 	    // Loads data in the tree.
@@ -20918,7 +21024,7 @@
 	
 	
 	    InfiniteTree.prototype.loadData = function loadData() {
-	        var _this4 = this;
+	        var _this3 = this;
 	
 	        var data = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
 	
@@ -20938,19 +21044,21 @@
 	                node = node.parent;
 	            }
 	            return node;
-	        }(this.nodes[0]);
+	        }(this.nodes.length > 0 ? this.nodes[0] : null);
 	        this.state.selectedNode = null;
 	
-	        // Update the lookup table with newly added nodes
-	        this.flattenChildNodes(this.state.rootNode).forEach(function (node) {
-	            if (node.id !== undefined) {
-	                _this4.nodeTable.set(node.id, node);
-	            }
-	        });
+	        if (this.state.rootNode) {
+	            // Update the lookup table with newly added nodes
+	            this.flattenChildNodes(this.state.rootNode).forEach(function (node) {
+	                if (node.id !== undefined) {
+	                    _this3.nodeTable.set(node.id, node);
+	                }
+	            });
+	        }
 	
 	        // Update rows
 	        this.rows = this.nodes.map(function (node) {
-	            return _this4.options.rowRenderer(node, _this4.options);
+	            return _this3.options.rowRenderer(node, _this3.options);
 	        });
 	
 	        // Updates list with new data
@@ -20962,14 +21070,17 @@
 	
 	
 	    InfiniteTree.prototype.openNode = function openNode(node) {
-	        var _this5 = this;
+	        var _this4 = this;
 	
-	        ensureNodeInstance(node);
+	        if (!ensureNodeInstance(node)) {
+	            return false;
+	        }
 	
 	        // Retrieve node index
 	        var nodeIndex = this.nodes.indexOf(node);
 	        if (nodeIndex < 0) {
-	            throw new Error('Invalid node index');
+	            error('Invalid node index');
+	            return false;
 	        }
 	
 	        // Check if the openNode action can be performed
@@ -20979,6 +21090,11 @@
 	
 	        if (!node.hasChildren() && node.loadOnDemand) {
 	            if (typeof this.options.loadNodes !== 'function') {
+	                return false;
+	            }
+	
+	            // Reentrancy not allowed
+	            if (node.state.loading === true) {
 	                return false;
 	            }
 	
@@ -20992,22 +21108,33 @@
 	            this.options.loadNodes(node, function (err, nodes) {
 	                // Set loading state to false
 	                node.state.loading = false;
-	                _this5.rows[nodeIndex] = _this5.options.rowRenderer(node, _this5.options);
+	                _this4.rows[nodeIndex] = _this4.options.rowRenderer(node, _this4.options);
 	
 	                // Updates list with new data
-	                _this5.update();
+	                _this4.update();
 	
 	                if (err) {
+	                    return;
+	                }
+	                if (!nodes) {
+	                    return;
+	                }
+	
+	                nodes = [].concat(nodes || []); // Ensure array
+	                if (nodes.length === 0) {
 	                    return;
 	                }
 	
 	                // Append child nodes
 	                nodes.forEach(function (childNode) {
-	                    _this5.appendChildNode(childNode, node);
+	                    _this4.appendChildNode(childNode, node);
 	                });
 	
-	                // Call openNode again
-	                _this5.openNode(node);
+	                // Ensure the node has children to prevent from infinite loop
+	                if (node.hasChildren()) {
+	                    // Call openNode again
+	                    _this4.openNode(node);
+	                }
 	            });
 	
 	            return false;
@@ -21019,7 +21146,7 @@
 	
 	        var nodes = (0, _flattree.flatten)(node.children, { openNodes: this.state.openNodes });
 	        var rows = nodes.map(function (node) {
-	            return _this5.options.rowRenderer(node, _this5.options);
+	            return _this4.options.rowRenderer(node, _this4.options);
 	        });
 	
 	        // Update nodes & rows
@@ -21033,12 +21160,12 @@
 	        if (nodes.length > 0 && !this.nodeTable.get(nodes[0])) {
 	            nodes.forEach(function (node) {
 	                if (node.id !== undefined) {
-	                    _this5.nodeTable.set(node.id, node);
+	                    _this4.nodeTable.set(node.id, node);
 	                }
 	            });
 	        }
 	
-	        // Emit the 'openNode' event
+	        // Emit 'openNode' event
 	        this.emit('openNode', node);
 	
 	        // Updates list with new data
@@ -21052,9 +21179,11 @@
 	
 	
 	    InfiniteTree.prototype.removeChildNodes = function removeChildNodes(parentNode) {
-	        var _this6 = this;
+	        var _this5 = this;
 	
-	        ensureNodeInstance(parentNode);
+	        if (!ensureNodeInstance(parentNode)) {
+	            return false;
+	        }
 	
 	        if (parentNode.children.length === 0) {
 	            return false;
@@ -21102,14 +21231,14 @@
 	        {
 	            (function () {
 	                // Update open nodes and lookup table
-	                var childNodes = _this6.flattenChildNodes(parentNode);
+	                var childNodes = _this5.flattenChildNodes(parentNode);
 	
-	                _this6.state.openNodes = _this6.state.openNodes.filter(function (node) {
+	                _this5.state.openNodes = _this5.state.openNodes.filter(function (node) {
 	                    return childNodes.indexOf(node) < 0;
 	                });
 	
 	                childNodes.forEach(function (node) {
-	                    _this6.nodeTable.unset(node.id);
+	                    _this5.nodeTable.unset(node.id);
 	                });
 	            })();
 	        }
@@ -21125,9 +21254,11 @@
 	
 	
 	    InfiniteTree.prototype.removeNode = function removeNode(node) {
-	        var _this7 = this;
+	        var _this6 = this;
 	
-	        ensureNodeInstance(node);
+	        if (!ensureNodeInstance(node)) {
+	            return false;
+	        }
 	
 	        var parentNode = node.parent;
 	        if (!parentNode) {
@@ -21185,14 +21316,14 @@
 	        {
 	            (function () {
 	                // Update open nodes and lookup table
-	                var nodes = _this7.flattenNode(node);
+	                var nodes = _this6.flattenNode(node);
 	
-	                _this7.state.openNodes = _this7.state.openNodes.filter(function (node) {
+	                _this6.state.openNodes = _this6.state.openNodes.filter(function (node) {
 	                    return nodes.indexOf(node) < 0;
 	                });
 	
 	                nodes.forEach(function (node) {
-	                    _this7.nodeTable.unset(node.id);
+	                    _this6.nodeTable.unset(node.id);
 	                });
 	            })();
 	        }
@@ -21204,27 +21335,31 @@
 	    };
 	    // Sets the current scroll position to this node.
 	    // @param {Node} node The Node object.
-	    // @return {number} Returns the vertical scroll position, or -1 on error.
+	    // @return {boolean} Returns true on success, false otherwise.
 	
 	
 	    InfiniteTree.prototype.scrollToNode = function scrollToNode(node) {
-	        ensureNodeInstance(node);
+	        if (!ensureNodeInstance(node)) {
+	            return false;
+	        }
 	
 	        // Retrieve node index
 	        var nodeIndex = this.nodes.indexOf(node);
 	        if (nodeIndex < 0) {
-	            return -1;
+	            return false;
 	        }
 	        if (!this.contentElement) {
-	            return -1;
+	            return false;
 	        }
-	        // Get the offset height of the first child element that contains the "tree-item" class
-	        var firstChild = this.contentElement.querySelectorAll('.tree-item')[0];
+	        // Get the offset height of the first child
+	        var firstChild = this.contentElement.firstChild;
 	        var rowHeight = firstChild && firstChild.offsetHeight || 0;
-	        return this.scrollTop(nodeIndex * rowHeight);
+	        this.scrollTop(nodeIndex * rowHeight);
+	
+	        return true;
 	    };
 	    // Gets (or sets) the current vertical position of the scroll bar.
-	    // @param {number} [value] An integer that indicates the new position to set the scroll bar to.
+	    // @param {number} [value] If the value is specified, indicates the new position to set the scroll bar to.
 	    // @return {number} Returns the vertical scroll position.
 	
 	
@@ -21266,7 +21401,7 @@
 	                this.rows[selectedIndex] = this.options.rowRenderer(selectedNode, this.options);
 	                this.state.selectedNode = null;
 	
-	                // Emit the 'selectNode' event
+	                // Emit 'selectNode' event
 	                this.emit('selectNode', null);
 	
 	                // Updates list with new data
@@ -21278,12 +21413,15 @@
 	            return false;
 	        }
 	
-	        ensureNodeInstance(node);
+	        if (!ensureNodeInstance(node)) {
+	            return false;
+	        }
 	
 	        // Retrieve node index
 	        var nodeIndex = this.nodes.indexOf(node);
 	        if (nodeIndex < 0) {
-	            throw new Error('Invalid node index');
+	            error('Invalid node index');
+	            return false;
 	        }
 	
 	        // Select this node
@@ -21305,12 +21443,12 @@
 	        if (this.state.selectedNode !== node) {
 	            this.state.selectedNode = node;
 	
-	            // Emit the 'selectNode' event
+	            // Emit 'selectNode' event
 	            this.emit('selectNode', node);
 	        } else {
 	            this.state.selectedNode = null;
 	
-	            // Emit the 'selectNode' event
+	            // Emit 'selectNode' event
 	            this.emit('selectNode', null);
 	        }
 	
@@ -21386,11 +21524,14 @@
 	
 	
 	    InfiniteTree.prototype.update = function update() {
+	        // Emit 'contentWillUpdate' event
+	        this.emit('contentWillUpdate');
+	
 	        // Update the list with new data
 	        this.clusterize.update(this.rows);
 	
-	        // Emit the 'update' event
-	        this.emit('update');
+	        // Emit 'contentWillUpdate' event
+	        this.emit('contentDidUpdate');
 	    };
 	    // Updates the data of a node.
 	    // @param {Node} node The Node object.
@@ -21398,15 +21539,19 @@
 	
 	
 	    InfiniteTree.prototype.updateNode = function updateNode(node, data) {
-	        ensureNodeInstance(node);
+	        if (!ensureNodeInstance(node)) {
+	            return;
+	        }
 	
-	        // The static attributes (i.e. children, parent, and state) are being protected
-	        var _node = node;
-	        var children = _node.children;
-	        var parent = _node.parent;
-	        var state = _node.state;
+	        // Clone a new one
+	        data = (0, _helper.extend)({}, data);
 	
-	        node = extend(node, data, { children: children, parent: parent, state: state });
+	        // Ignore keys: children, parent, and state
+	        delete data.children;
+	        delete data.parent;
+	        delete data.state;
+	
+	        node = (0, _helper.extend)(node, data);
 	
 	        // Retrieve node index
 	        var nodeIndex = this.nodes.indexOf(node);
@@ -22505,11 +22650,13 @@
 	
 	var defaultRowRenderer = function defaultRowRenderer(node, treeOptions) {
 	    var id = node.id;
-	    var label = node.label;
+	    var name = node.name;
 	    var _node$loadOnDemand = node.loadOnDemand;
 	    var loadOnDemand = _node$loadOnDemand === undefined ? false : _node$loadOnDemand;
 	    var children = node.children;
 	    var state = node.state;
+	
+	    var droppable = treeOptions.droppable;
 	    var depth = state.depth;
 	    var open = state.open;
 	    var path = state.path;
@@ -22521,47 +22668,47 @@
 	    var more = node.hasChildren();
 	
 	    var togglerContent = '';
+	    if (!more && loadOnDemand) {
+	        togglerContent = '►';
+	    }
 	    if (more && open) {
 	        togglerContent = '▼';
 	    }
 	    if (more && !open) {
 	        togglerContent = '►';
 	    }
-	    if (!more && loadOnDemand) {
-	        togglerContent = '►';
-	    }
 	    var toggler = (0, _helper.buildHTML)('a', togglerContent, {
 	        'class': function () {
+	            if (!more && loadOnDemand) {
+	                return (0, _helper.classNames)(treeOptions.togglerClass, 'infinite-tree-closed');
+	            }
 	            if (more && open) {
-	                return (0, _helper.classNames)('tree-toggler');
+	                return (0, _helper.classNames)(treeOptions.togglerClass);
 	            }
 	            if (more && !open) {
-	                return (0, _helper.classNames)('tree-toggler', 'tree-closed');
-	            }
-	            if (!more && loadOnDemand) {
-	                return (0, _helper.classNames)('tree-toggler', 'tree-closed');
+	                return (0, _helper.classNames)(treeOptions.togglerClass, 'infinite-tree-closed');
 	            }
 	            return '';
 	        }()
 	    });
-	    var title = (0, _helper.buildHTML)('span', (0, _helper.quoteattr)(label), {
-	        'class': (0, _helper.classNames)('tree-title')
+	    var title = (0, _helper.buildHTML)('span', (0, _helper.quoteattr)(name), {
+	        'class': (0, _helper.classNames)('infinite-tree-title')
 	    });
 	    var treeNode = (0, _helper.buildHTML)('div', toggler + title, {
-	        'class': 'tree-node',
+	        'class': 'infinite-tree-node',
 	        'style': 'margin-left: ' + depth * 18 + 'px'
 	    });
 	
 	    return (0, _helper.buildHTML)('div', treeNode, {
-	        'aria-id': id,
-	        'aria-expanded': more && open,
-	        'aria-depth': depth,
-	        'aria-path': path,
-	        'aria-selected': selected,
-	        'aria-children': childrenLength,
-	        'aria-total': total,
-	        'class': (0, _helper.classNames)('tree-item', { 'tree-selected': selected }),
-	        'droppable': true
+	        'data-id': id,
+	        'data-expanded': more && open,
+	        'data-depth': depth,
+	        'data-path': path,
+	        'data-selected': selected,
+	        'data-children': childrenLength,
+	        'data-total': total,
+	        'class': (0, _helper.classNames)('infinite-tree-item', { 'infinite-tree-selected': selected }),
+	        'droppable': droppable
 	    });
 	};
 	
@@ -22576,6 +22723,26 @@
 	exports.__esModule = true;
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	
+	var extend = function extend(target) {
+	    for (var _len = arguments.length, sources = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	        sources[_key - 1] = arguments[_key];
+	    }
+	
+	    target = target || {};
+	    for (var index = 0; index < sources.length; index++) {
+	        var obj = sources[index];
+	        if (!obj) {
+	            continue;
+	        }
+	        for (var key in obj) {
+	            if (obj.hasOwnProperty(key)) {
+	                target[key] = obj[key];
+	            }
+	        }
+	    }
+	    return target;
+	};
 	
 	var preventDefault = function preventDefault(e) {
 	    if (typeof e.preventDefault !== 'undefined') {
@@ -22668,8 +22835,8 @@
 	};
 	
 	var classNames = function classNames() {
-	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	        args[_key] = arguments[_key];
+	    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+	        args[_key2] = arguments[_key2];
 	    }
 	
 	    var classNames = [];
@@ -22688,6 +22855,24 @@
 	        }
 	    });
 	    return classNames.join(' ');
+	};
+	
+	// http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
+	
+	//Returns true if it is a DOM element
+	var isDOMElement = function isDOMElement(o) {
+	    if ((typeof HTMLElement === 'undefined' ? 'undefined' : _typeof(HTMLElement)) === 'object') {
+	        return o instanceof HTMLElement;
+	    }
+	    return o && (typeof o === 'undefined' ? 'undefined' : _typeof(o)) === 'object' && o.nodeType === 1 && typeof o.nodeName === 'string';
+	};
+	
+	// Returns true if it is a DOM node
+	var isDOMNode = function isDOMNode(o) {
+	    if ((typeof Node === 'undefined' ? 'undefined' : _typeof(Node)) === 'object') {
+	        return o instanceof Node;
+	    }
+	    return o && (typeof o === 'undefined' ? 'undefined' : _typeof(o)) === 'object' && typeof o.nodeType === 'number' && typeof o.nodeName === 'string';
 	};
 	
 	var quoteattr = function quoteattr(s, preserveCR) {
@@ -22763,6 +22948,7 @@
 	    return h;
 	};
 	
+	exports.extend = extend;
 	exports.preventDefault = preventDefault;
 	exports.stopPropagation = stopPropagation;
 	exports.dispatchEvent = dispatchEvent;
@@ -22773,6 +22959,8 @@
 	exports.removeClass = removeClass;
 	exports.toggleClass = toggleClass;
 	exports.classNames = classNames;
+	exports.isDOMElement = isDOMElement;
+	exports.isDOMNode = isDOMNode;
 	exports.quoteattr = quoteattr;
 	exports.buildHTML = buildHTML;
 
@@ -22788,9 +22976,9 @@
 	
 	var _helper = __webpack_require__(180);
 	
-	var rowRenderer = function rowRenderer(node, treeOptions) {
+	var renderer = function renderer(node, treeOptions) {
 	    var id = node.id;
-	    var label = node.label;
+	    var name = node.name;
 	    var _node$loadOnDemand = node.loadOnDemand;
 	    var loadOnDemand = _node$loadOnDemand === undefined ? false : _node$loadOnDemand;
 	    var children = node.children;
@@ -22830,23 +23018,23 @@
 	    var toggler = (0, _helper.buildHTML)('a', togglerContent, {
 	        'class': function () {
 	            if (!more && loadOnDemand) {
-	                return (0, _helper.classNames)('tree-toggler', 'tree-closed');
+	                return (0, _helper.classNames)(treeOptions.togglerClass, 'infinite-tree-closed');
 	            }
 	            if (more && open) {
-	                return (0, _helper.classNames)('tree-toggler');
+	                return (0, _helper.classNames)(treeOptions.togglerClass);
 	            }
 	            if (more && !open) {
-	                return (0, _helper.classNames)('tree-toggler', 'tree-closed');
+	                return (0, _helper.classNames)(treeOptions.togglerClass, 'infinite-tree-closed');
 	            }
 	            return '';
 	        }()
 	    });
 	
 	    var icon = (0, _helper.buildHTML)('i', '', {
-	        'class': (0, _helper.classNames)('tree-folder-icon', 'glyphicon', { 'glyphicon-folder-open': more && open }, { 'glyphicon-folder-close': more && !open }, { 'glyphicon-file': !more })
+	        'class': (0, _helper.classNames)('infinite-tree-folder-icon', 'glyphicon', { 'glyphicon-folder-open': more && open }, { 'glyphicon-folder-close': more && !open }, { 'glyphicon-file': !more })
 	    });
-	    var title = (0, _helper.buildHTML)('span', (0, _helper.quoteattr)(label), {
-	        'class': (0, _helper.classNames)('tree-title')
+	    var title = (0, _helper.buildHTML)('span', (0, _helper.quoteattr)(name), {
+	        'class': (0, _helper.classNames)('infinite-tree-title')
 	    });
 	    var loadingIcon = (0, _helper.buildHTML)('i', '', {
 	        'style': 'margin-left: 5px',
@@ -22856,19 +23044,19 @@
 	        'class': 'count'
 	    });
 	    var treeNode = (0, _helper.buildHTML)('div', toggler + icon + title + loadingIcon + count, {
-	        'class': 'tree-node',
+	        'class': 'infinite-tree-node',
 	        'style': 'margin-left: ' + depth * 18 + 'px'
 	    });
 	
 	    var treeNodeAttributes = {
-	        'aria-id': id,
-	        'aria-expanded': more && open,
-	        'aria-depth': depth,
-	        'aria-path': path,
-	        'aria-selected': selected,
-	        'aria-children': childrenLength,
-	        'aria-total': total,
-	        'class': (0, _helper.classNames)('tree-item', { 'tree-selected': selected })
+	        'data-id': id,
+	        'data-expanded': more && open,
+	        'data-depth': depth,
+	        'data-path': path,
+	        'data-selected': selected,
+	        'data-children': childrenLength,
+	        'data-total': total,
+	        'class': (0, _helper.classNames)('infinite-tree-item', { 'infinite-tree-selected': selected })
 	    };
 	    if (droppable) {
 	        treeNodeAttributes['droppable'] = true;
@@ -22877,7 +23065,7 @@
 	    return (0, _helper.buildHTML)('div', treeNode, treeNodeAttributes);
 	};
 	
-	exports.default = rowRenderer;
+	exports.default = renderer;
 
 /***/ },
 /* 180 */
@@ -23166,7 +23354,7 @@
 	
 	
 	// module
-	exports.push([module.id, "/* Change the max-height to suit your needs. */\n.infinite-tree-content {\n  max-height: 400px;\n}\n.infinite-tree-scroll {\n  overflow: auto;\n}\n.infinite-tree-content {\n  outline: 0;\n}\n.infinite-tree-content .tree-selected.tree-item,\n.infinite-tree-content .tree-selected.tree-item:hover {\n  background: #deecfd;\n  border: 1px solid #06c;\n}\n.infinite-tree-content .tree-item {\n  border: 1px solid transparent;\n  cursor: default;\n}\n.infinite-tree-content .tree-item:hover {\n  background: #f2fdff;\n}\n.infinite-tree-content .tree-item.highlight {\n  border: 1px dotted #ccc;\n  background-color: #f5f6f7;\n}\n.infinite-tree-content .tree-node {\n  position: relative;\n}\n.infinite-tree-content .tree-toggler {\n  color: #666;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.infinite-tree-content .tree-toggler:hover {\n  color: #333;\n  text-decoration: none;\n}\n.infinite-tree-content .tree-title {\n  cursor: pointer;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.infinite-tree-no-data {\n  text-align: center;\n}\n", ""]);
+	exports.push([module.id, ".infinite-tree-scroll {\n  overflow: auto;\n  max-height: 400px; /* Change the height to suit your needs. */\n}\n.infinite-tree-table {\n  width: 100%;\n}\n.infinite-tree-content {\n  outline: 0;\n}\n.infinite-tree-content .infinite-tree-selected.infinite-tree-item,\n.infinite-tree-content .infinite-tree-selected.infinite-tree-item:hover {\n  background: #deecfd;\n  border: 1px solid #06c;\n}\n.infinite-tree-content .infinite-tree-item {\n  border: 1px solid transparent;\n  cursor: default;\n}\n.infinite-tree-content .infinite-tree-item:hover {\n  background: #f2fdff;\n}\n.infinite-tree-content .infinite-tree-node {\n  position: relative;\n}\n.infinite-tree-content .infinite-tree-toggler {\n  color: #666;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.infinite-tree-content .infinite-tree-toggler:hover {\n  color: #333;\n  text-decoration: none;\n}\n.infinite-tree-content .infinite-tree-title {\n  cursor: pointer;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.infinite-tree-no-data {\n  text-align: center;\n}\n", ""]);
 	
 	// exports
 
@@ -23495,6 +23683,46 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/stylus-loader/index.js!./app.styl", function() {
+				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/stylus-loader/index.js!./app.styl");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 186 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(183)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "#classic .preview {\n  font-family: Consolas;\n  font-size: 14px;\n  font-weight: bold;\n  white-space: pre-wrap;\n  background-color: #282c34;\n  border: solid 1px #ccc;\n  color: #9197a3;\n  padding: 20px;\n  min-height: 400px;\n}\n#classic .progress-bar {\n  -webkit-transition: none;\n  -moz-transition: none;\n  -ms-transition: none;\n  -o-transition: none;\n  -webkit-transition: none;\n  -moz-transition: none;\n  -o-transition: none;\n  -ms-transition: none;\n  transition: none;\n}\n#classic .dropped-result {\n  font-size: 16px;\n  line-height: 42px;\n}\n#classic .tree {\n  border: 1px solid #ccc;\n  background-color: #fff;\n}\n#classic .infinite-tree-item.infinite-tree-drop-hover {\n  border: 1px dotted #ccc;\n  background-color: #f5f6f7;\n}\n#classic .infinite-tree-toggler {\n  text-align: center;\n  margin-right: 5px;\n}\n#classic .infinite-tree-folder-icon {\n  width: 19px;\n}\n#classic .infinite-tree-folder-icon:first-child {\n  margin-left: 20px;\n}\n#classic .infinite-tree-folder-icon:before {\n  margin-right: 5px;\n}\n#classic .infinite-tree-node .count {\n  position: absolute;\n  right: 4px;\n  padding: 0 8px;\n  height: 18px;\n  line-height: 18px;\n  background-color: #d8dfea;\n  color: #3b5998;\n  font-style: normal;\n  font-weight: bold;\n  text-align: center;\n  -webkit-border-radius: 2px;\n  border-radius: 2px;\n}\n#classic .infinite-tree-scroll {\n  overflow: auto;\n  max-height: 400px;\n}\n", ""]);
+	
+	// exports
+
+
+/***/ },
+/* 187 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(188);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(184)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
 			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/stylus-loader/index.js!./animation.styl", function() {
 				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/stylus-loader/index.js!./animation.styl");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
@@ -23506,7 +23734,7 @@
 	}
 
 /***/ },
-/* 186 */
+/* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(183)();

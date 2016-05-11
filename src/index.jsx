@@ -11,12 +11,11 @@ module.exports = class extends React.Component {
     tree = null;
 
     eventHandlers = {
-        onUpdate: null,
+        onContentWillUpdate: null,
+        onContentDidUpdate: null,
         onOpenNode: null,
         onCloseNode: null,
-        onSelectNode: null,
-        onDropNode: null,
-        onScrollProgress: null
+        onSelectNode: null
     };
 
     componentDidMount() {
@@ -32,7 +31,7 @@ module.exports = class extends React.Component {
                 return;
             }
 
-            const eventName = lcfirst(key.substr(2)); // e.g. onUpdate -> update
+            const eventName = lcfirst(key.substr(2)); // e.g. onContentWillUpdate -> contentWillUpdate
             this.eventHandlers[key] = this.props[key];
             this.tree.on(eventName, this.eventHandlers[key]);
         });

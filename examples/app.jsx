@@ -3,13 +3,14 @@ import InfiniteTree from '../src';
 import rowRenderer from './renderer';
 import { quoteattr } from './helper';
 import '../src/index.styl';
+import './app.styl';
 import './animation.styl';
 
 const generateData = () => {
     const data = [];
-    const source = '{"id":"<root>","label":"<root>","props":{"droppable":true},"children":[{"id":"alpha","label":"Alpha","props":{"droppable":true}},{"id":"bravo","label":"Bravo","props":{"droppable":true},"children":[{"id":"charlie","label":"Charlie","props":{"droppable":true},"children":[{"id":"delta","label":"Delta","props":{"droppable":true},"children":[{"id":"echo","label":"Echo","props":{"droppable":true}},{"id":"foxtrot","label":"Foxtrot","props":{"droppable":true}}]},{"id":"golf","label":"Golf","props":{"droppable":true}}]},{"id":"hotel","label":"Hotel","props":{"droppable":true},"children":[{"id":"india","label":"India","props":{"droppable":true},"children":[{"id":"juliet","label":"Juliet","props":{"droppable":true}}]}]},{"id":"kilo","label":"(Load On Demand) Kilo","loadOnDemand":true,"props":{"droppable":true}}]}]}';
+    const source = '{"id":"<root>","name":"<root>","props":{"droppable":true},"children":[{"id":"alpha","name":"Alpha","props":{"droppable":true}},{"id":"bravo","name":"Bravo","props":{"droppable":true},"children":[{"id":"charlie","name":"Charlie","props":{"droppable":true},"children":[{"id":"delta","name":"Delta","props":{"droppable":true},"children":[{"id":"echo","name":"Echo","props":{"droppable":true}},{"id":"foxtrot","name":"Foxtrot","props":{"droppable":true}}]},{"id":"golf","name":"Golf","props":{"droppable":true}}]},{"id":"hotel","name":"Hotel","props":{"droppable":true},"children":[{"id":"india","name":"India","props":{"droppable":true},"children":[{"id":"juliet","name":"Juliet","props":{"droppable":true}}]}]},{"id":"kilo","name":"(Load On Demand) Kilo","loadOnDemand":true,"props":{"droppable":true}}]}]}';
     for (let i = 0; i < 1000; ++i) {
-        data.push(JSON.parse(source.replace(/"(id|label)":"([^"]*)"/g, '"$1": "$2.' + i + '"')));
+        data.push(JSON.parse(source.replace(/"(id|name)":"([^"]*)"/g, '"$1": "$2.' + i + '"')));
     }
     return data;
 };
@@ -18,11 +19,11 @@ class App extends React.Component {
     tree = null;
 
     updatePreview(node) {
-        const el = document.querySelector('#preview');
+        const el = document.querySelector('[data-id="preview"]');
         if (node) {
             let o = {
                 id: node.id,
-                label: node.label,
+                name: node.name,
                 children: node.children ? node.children.length : 0,
                 parent: node.parent ? node.parent.id : null,
                 state: node.state
@@ -48,17 +49,28 @@ class App extends React.Component {
                 <InfiniteTree
                     ref={(c) => this.tree = c.tree}
                     autoOpen={true}
-                    droppable={true}
+                    droppable={{
+                        hoverClass: 'infinite-tree-drop-hover',
+                        accept: function(opts) {
+                            const { type, draggableTarget, droppableTarget, node } = opts;
+                            return true;
+                        },
+                        drop: function(e, opts) {
+                            const { draggableTarget, droppableTarget, node } = opts;
+                            const source = e.dataTransfer.getData('text');
+                            document.querySelector('[data-id="dropped-result"]').innerHTML = 'Dropped to <b>' + quoteattr(node.name) + '</b>';
+                        }
+                    }}
                     loadNodes={(parentNode, done) => {
                         const suffix = parentNode.id.replace(/(\w)+/, '');
                         const nodes = [
                             {
                                 id: 'node1' + suffix,
-                                label: 'Node 1'
+                                name: 'Node 1'
                             },
                             {
                                 id: 'node2' + suffix,
-                                label: 'Node 2'
+                                name: 'Node 2'
                             }
                         ];
                         setTimeout(() => {
@@ -75,13 +87,13 @@ class App extends React.Component {
                     }}
                     onDropNode={(node, e) => {
                         const source = e.dataTransfer.getData('text');
-                        document.querySelector('#dropped-result').innerHTML = 'Dropped to <b>' + quoteattr(node.label) + '</b>';
+                        document.querySelector('[data-id="dropped-result"]').innerHTML = 'Dropped to <b>' + quoteattr(node.name) + '</b>';
                     }}
-                    onUpdate={() => {
+                    onContentWillUpdate={() => {
+                        console.log('onContentWillUpdate');
+                    }}
+                    onContentDidUpdate={() => {
                         this.updatePreview(this.tree.getSelectedNode());
-                    }}
-                    onScrollProgress={(progress) => {
-                        document.querySelector('#scrolling-progress').style.width = progress + '%';
                     }}
                     onSelect={(node) => {
                         this.updatePreview(node);

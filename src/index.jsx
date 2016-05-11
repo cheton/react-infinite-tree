@@ -44,7 +44,7 @@ module.exports = class extends React.Component {
             }
 
             const eventName = lcfirst(key.substr(2)); // e.g. onUpdate -> update
-            this.tree.off(eventName, this.eventHandlers[key]);
+            this.tree.removeListener(eventName, this.eventHandlers[key]);
             this.eventHandlers[key] = null;
         });
 

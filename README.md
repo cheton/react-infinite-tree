@@ -92,7 +92,7 @@ class App extends React.Component {
                     onCloseNode={(node) => {
                         console.log('close node:', node);
                     }}
-                    onSelect={(node) => {
+                    onSelectNode={(node) => {
                         console.log('select node:', node);
                     }}
                     onContentWillUpdate={() => {

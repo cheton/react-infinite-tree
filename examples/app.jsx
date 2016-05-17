@@ -95,7 +95,7 @@ class App extends React.Component {
                     onContentDidUpdate={() => {
                         this.updatePreview(this.tree.getSelectedNode());
                     }}
-                    onSelect={(node) => {
+                    onSelectNode={(node) => {
                         this.updatePreview(node);
                     }}
                 />

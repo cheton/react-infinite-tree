@@ -92,6 +92,7 @@ exports["InfiniteTree"] =
 	        }
 
 	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(_class2)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.tree = null, _this.eventHandlers = {
+	            onClick: null,
 	            onContentWillUpdate: null,
 	            onContentDidUpdate: null,
 	            onOpenNode: null,

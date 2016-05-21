@@ -85,6 +85,10 @@ class App extends React.Component {
                         }
                         return true;
                     }}
+                    onClick={(event) => {
+                        const target = event.target || event.srcElement; // IE8
+                        console.log('click', target);
+                    }}
                     onDropNode={(node, e) => {
                         const source = e.dataTransfer.getData('text');
                         document.querySelector('[data-id="dropped-result"]').innerHTML = 'Dropped to <b>' + quoteattr(node.name) + '</b>';

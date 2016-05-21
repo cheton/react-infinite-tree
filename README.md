@@ -86,6 +86,10 @@ class App extends React.Component {
                         }
                         return true;
                     }}
+                    onClick={(event) => {
+                        var target = event.target || event.srcElement; // IE8
+                        console.log('click:', target);
+                    }}
                     onOpenNode={(node) => {
                         console.log('open node:', node);
                     }}

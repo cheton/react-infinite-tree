@@ -11,6 +11,7 @@ module.exports = class extends React.Component {
     tree = null;
 
     eventHandlers = {
+        onClick: null,
         onContentWillUpdate: null,
         onContentDidUpdate: null,
         onOpenNode: null,

@@ -58,7 +58,7 @@
 	
 	var _app2 = _interopRequireDefault(_app);
 	
-	var _helper = __webpack_require__(187);
+	var _helper = __webpack_require__(188);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -20377,17 +20377,17 @@
 	
 	var _src2 = _interopRequireDefault(_src);
 	
-	var _renderer = __webpack_require__(181);
+	var _renderer = __webpack_require__(187);
 	
 	var _renderer2 = _interopRequireDefault(_renderer);
 	
-	var _helper = __webpack_require__(187);
+	var _helper = __webpack_require__(188);
 	
-	__webpack_require__(188);
+	__webpack_require__(189);
 	
-	__webpack_require__(192);
+	__webpack_require__(193);
 	
-	__webpack_require__(194);
+	__webpack_require__(195);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -20539,6 +20539,8 @@
 
 	'use strict';
 	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	var _react = __webpack_require__(1);
@@ -20549,9 +20551,15 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _infiniteTree = __webpack_require__(170);
+	var _server = __webpack_require__(170);
+	
+	var _server2 = _interopRequireDefault(_server);
+	
+	var _infiniteTree = __webpack_require__(174);
 	
 	var _infiniteTree2 = _interopRequireDefault(_infiniteTree);
+	
+	var _renderer = __webpack_require__(185);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -20584,6 +20592,8 @@
 	
 	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(_class2)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.tree = null, _this.eventHandlers = {
 	            onClick: null,
+	            onClusterWillChange: null,
+	            onClusterDidChange: null,
 	            onContentWillUpdate: null,
 	            onContentDidUpdate: null,
 	            onOpenNode: null,
@@ -20605,6 +20615,16 @@
 	
 	            var el = _reactDom2.default.findDOMNode(this);
 	            options.el = el;
+	
+	            var rowRenderer = options.rowRenderer || _renderer.defaultRowRenderer;
+	            options.rowRenderer = function (node, opts) {
+	                var row = rowRenderer(node, opts);
+	                if ((typeof row === 'undefined' ? 'undefined' : _typeof(row)) === 'object') {
+	                    // Use ReactDOMServer.renderToString() to render React Component
+	                    row = _server2.default.renderToString(row);
+	                }
+	                return row;
+	            };
 	
 	            this.tree = new _infiniteTree2.default(options);
 	
@@ -20656,7 +20676,164 @@
 
 	'use strict';
 	
-	var _infiniteTree = __webpack_require__(171);
+	module.exports = __webpack_require__(171);
+
+
+/***/ },
+/* 171 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactDOMServer
+	 */
+	
+	'use strict';
+	
+	var ReactDefaultInjection = __webpack_require__(43);
+	var ReactServerRendering = __webpack_require__(172);
+	var ReactVersion = __webpack_require__(36);
+	
+	ReactDefaultInjection.inject();
+	
+	var ReactDOMServer = {
+	  renderToString: ReactServerRendering.renderToString,
+	  renderToStaticMarkup: ReactServerRendering.renderToStaticMarkup,
+	  version: ReactVersion
+	};
+	
+	module.exports = ReactDOMServer;
+
+/***/ },
+/* 172 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactServerRendering
+	 */
+	'use strict';
+	
+	var ReactDOMContainerInfo = __webpack_require__(161);
+	var ReactDefaultBatchingStrategy = __webpack_require__(134);
+	var ReactElement = __webpack_require__(8);
+	var ReactInstrumentation = __webpack_require__(18);
+	var ReactMarkupChecksum = __webpack_require__(163);
+	var ReactReconciler = __webpack_require__(62);
+	var ReactServerBatchingStrategy = __webpack_require__(173);
+	var ReactServerRenderingTransaction = __webpack_require__(128);
+	var ReactUpdates = __webpack_require__(59);
+	
+	var emptyObject = __webpack_require__(26);
+	var instantiateReactComponent = __webpack_require__(119);
+	var invariant = __webpack_require__(7);
+	
+	/**
+	 * @param {ReactElement} element
+	 * @return {string} the HTML markup
+	 */
+	function renderToStringImpl(element, makeStaticMarkup) {
+	  var transaction;
+	  try {
+	    ReactUpdates.injection.injectBatchingStrategy(ReactServerBatchingStrategy);
+	
+	    transaction = ReactServerRenderingTransaction.getPooled(makeStaticMarkup);
+	
+	    return transaction.perform(function () {
+	      if (process.env.NODE_ENV !== 'production') {
+	        ReactInstrumentation.debugTool.onBeginFlush();
+	      }
+	      var componentInstance = instantiateReactComponent(element);
+	      var markup = ReactReconciler.mountComponent(componentInstance, transaction, null, ReactDOMContainerInfo(), emptyObject);
+	      if (process.env.NODE_ENV !== 'production') {
+	        ReactInstrumentation.debugTool.onUnmountComponent(componentInstance._debugID);
+	        ReactInstrumentation.debugTool.onEndFlush();
+	      }
+	      if (!makeStaticMarkup) {
+	        markup = ReactMarkupChecksum.addChecksumToMarkup(markup);
+	      }
+	      return markup;
+	    }, null);
+	  } finally {
+	    ReactServerRenderingTransaction.release(transaction);
+	    // Revert to the DOM batching strategy since these two renderers
+	    // currently share these stateful modules.
+	    ReactUpdates.injection.injectBatchingStrategy(ReactDefaultBatchingStrategy);
+	  }
+	}
+	
+	/**
+	 * Render a ReactElement to its initial HTML. This should only be used on the
+	 * server.
+	 * See https://facebook.github.io/react/docs/top-level-api.html#reactdomserver.rendertostring
+	 */
+	function renderToString(element) {
+	  !ReactElement.isValidElement(element) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'renderToString(): You must pass a valid ReactElement.') : invariant(false) : void 0;
+	  return renderToStringImpl(element, false);
+	}
+	
+	/**
+	 * Similar to renderToString, except this doesn't create extra DOM attributes
+	 * such as data-react-id that React uses internally.
+	 * See https://facebook.github.io/react/docs/top-level-api.html#reactdomserver.rendertostaticmarkup
+	 */
+	function renderToStaticMarkup(element) {
+	  !ReactElement.isValidElement(element) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'renderToStaticMarkup(): You must pass a valid ReactElement.') : invariant(false) : void 0;
+	  return renderToStringImpl(element, true);
+	}
+	
+	module.exports = {
+	  renderToString: renderToString,
+	  renderToStaticMarkup: renderToStaticMarkup
+	};
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ },
+/* 173 */
+/***/ function(module, exports) {
+
+	/**
+	 * Copyright 2014-present, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactServerBatchingStrategy
+	 */
+	
+	'use strict';
+	
+	var ReactServerBatchingStrategy = {
+	  isBatchingUpdates: false,
+	  batchedUpdates: function (callback) {
+	    // Don't do anything here. During the server rendering we don't want to
+	    // schedule any updates. We will simply ignore them.
+	  }
+	};
+	
+	module.exports = ReactServerBatchingStrategy;
+
+/***/ },
+/* 174 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _infiniteTree = __webpack_require__(175);
 	
 	var _infiniteTree2 = _interopRequireDefault(_infiniteTree);
 	
@@ -20665,7 +20842,7 @@
 	module.exports = _infiniteTree2['default'];
 
 /***/ },
-/* 171 */
+/* 175 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20674,23 +20851,23 @@
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 	
-	var _events = __webpack_require__(172);
+	var _events = __webpack_require__(176);
 	
 	var _events2 = _interopRequireDefault(_events);
 	
-	var _clusterize = __webpack_require__(173);
+	var _clusterize = __webpack_require__(177);
 	
 	var _clusterize2 = _interopRequireDefault(_clusterize);
 	
-	var _flattree = __webpack_require__(174);
+	var _flattree = __webpack_require__(178);
 	
-	var _lookupTable = __webpack_require__(178);
+	var _lookupTable = __webpack_require__(182);
 	
 	var _lookupTable2 = _interopRequireDefault(_lookupTable);
 	
-	var _renderer = __webpack_require__(179);
+	var _renderer = __webpack_require__(183);
 	
-	var _helper = __webpack_require__(180);
+	var _helper = __webpack_require__(184);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -21922,7 +22099,7 @@
 	exports['default'] = InfiniteTree;
 
 /***/ },
-/* 172 */
+/* 176 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -22226,7 +22403,7 @@
 
 
 /***/ },
-/* 173 */
+/* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*! Clusterize.js - v0.16.0 - 2016-03-12
@@ -22558,7 +22735,7 @@
 	}));
 
 /***/ },
-/* 174 */
+/* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22566,11 +22743,11 @@
 	exports.__esModule = true;
 	exports.Node = exports.flatten = undefined;
 	
-	var _flatten = __webpack_require__(175);
+	var _flatten = __webpack_require__(179);
 	
 	var _flatten2 = _interopRequireDefault(_flatten);
 	
-	var _node = __webpack_require__(177);
+	var _node = __webpack_require__(181);
 	
 	var _node2 = _interopRequireDefault(_node);
 	
@@ -22581,18 +22758,18 @@
 	exports.Node = _node2['default'];
 
 /***/ },
-/* 175 */
+/* 179 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _extend = __webpack_require__(176);
+	var _extend = __webpack_require__(180);
 	
 	var _extend2 = _interopRequireDefault(_extend);
 	
-	var _node = __webpack_require__(177);
+	var _node = __webpack_require__(181);
 	
 	var _node2 = _interopRequireDefault(_node);
 	
@@ -22786,7 +22963,7 @@
 	exports['default'] = flatten;
 
 /***/ },
-/* 176 */
+/* 180 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22818,14 +22995,14 @@
 	exports['default'] = extend;
 
 /***/ },
-/* 177 */
+/* 181 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _extend = __webpack_require__(176);
+	var _extend = __webpack_require__(180);
 	
 	var _extend2 = _interopRequireDefault(_extend);
 	
@@ -22945,7 +23122,7 @@
 	exports['default'] = Node;
 
 /***/ },
-/* 178 */
+/* 182 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -22990,7 +23167,7 @@
 	exports["default"] = LookupTable;
 
 /***/ },
-/* 179 */
+/* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22998,7 +23175,7 @@
 	exports.__esModule = true;
 	exports.defaultRowRenderer = undefined;
 	
-	var _helper = __webpack_require__(180);
+	var _helper = __webpack_require__(184);
 	
 	var defaultRowRenderer = function defaultRowRenderer(node, treeOptions) {
 	    var id = node.id;
@@ -23067,7 +23244,7 @@
 	exports.defaultRowRenderer = defaultRowRenderer;
 
 /***/ },
-/* 180 */
+/* 184 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -23318,7 +23495,7 @@
 	exports.buildHTML = buildHTML;
 
 /***/ },
-/* 181 */
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23326,14 +23503,11 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.defaultRowRenderer = undefined;
 	
 	var _react = __webpack_require__(1);
 	
 	var _react2 = _interopRequireDefault(_react);
-	
-	var _server = __webpack_require__(182);
-	
-	var _server2 = _interopRequireDefault(_server);
 	
 	var _classnames = __webpack_require__(186);
 	
@@ -23341,30 +23515,29 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var renderer = function renderer(node, treeOptions) {
+	/* eslint react/jsx-indent: 0 */
+	
+	
+	var defaultRowRenderer = function defaultRowRenderer(node, treeOptions) {
 	    var id = node.id;
 	    var name = node.name;
 	    var _node$loadOnDemand = node.loadOnDemand;
 	    var loadOnDemand = _node$loadOnDemand === undefined ? false : _node$loadOnDemand;
 	    var children = node.children;
 	    var state = node.state;
-	    var _node$props = node.props;
-	    var props = _node$props === undefined ? {} : _node$props;
 	
-	    var droppable = treeOptions.droppable && props.droppable;
+	    var droppable = treeOptions.droppable;
 	    var depth = state.depth;
 	    var open = state.open;
 	    var path = state.path;
 	    var total = state.total;
-	    var _state$loading = state.loading;
-	    var loading = _state$loading === undefined ? false : _state$loading;
 	    var _state$selected = state.selected;
 	    var selected = _state$selected === undefined ? false : _state$selected;
 	
 	    var childrenLength = Object.keys(children).length;
 	    var more = node.hasChildren();
 	
-	    return _server2.default.renderToString(_react2.default.createElement(
+	    return _react2.default.createElement(
 	        'div',
 	        {
 	            className: (0, _classnames2.default)('infinite-tree-item', { 'infinite-tree-selected': selected }),
@@ -23383,205 +23556,31 @@
 	                className: 'infinite-tree-node',
 	                style: { marginLeft: depth * 18 }
 	            },
-	            _react2.default.createElement(
+	            !more && loadOnDemand && _react2.default.createElement(
 	                'a',
-	                {
-	                    className: function () {
-	                        if (!more && loadOnDemand) {
-	                            return (0, _classnames2.default)(treeOptions.togglerClass, 'infinite-tree-closed');
-	                        }
-	                        if (more && open) {
-	                            return (0, _classnames2.default)(treeOptions.togglerClass);
-	                        }
-	                        if (more && !open) {
-	                            return (0, _classnames2.default)(treeOptions.togglerClass, 'infinite-tree-closed');
-	                        }
-	                        return '';
-	                    }()
-	                },
-	                !more && loadOnDemand && _react2.default.createElement('i', { className: 'glyphicon glyphicon-triangle-right' }),
-	                more && open && _react2.default.createElement('i', { className: 'glyphicon glyphicon-triangle-bottom' }),
-	                more && !open && _react2.default.createElement('i', { className: 'glyphicon glyphicon-triangle-right' })
+	                { className: (0, _classnames2.default)(treeOptions.togglerClass, 'infinite-tree-closed') },
+	                '►'
 	            ),
-	            _react2.default.createElement('i', {
-	                className: (0, _classnames2.default)('infinite-tree-folder-icon', 'glyphicon', { 'glyphicon-folder-open': more && open }, { 'glyphicon-folder-close': more && !open }, { 'glyphicon-file': !more })
-	            }),
+	            more && open && _react2.default.createElement(
+	                'a',
+	                { className: (0, _classnames2.default)(treeOptions.togglerClass) },
+	                '▼'
+	            ),
+	            more && !open && _react2.default.createElement(
+	                'a',
+	                { className: (0, _classnames2.default)(treeOptions.togglerClass, 'infinite-tree-closed') },
+	                '►'
+	            ),
 	            _react2.default.createElement(
 	                'span',
 	                { className: 'infinite-tree-title' },
 	                name
-	            ),
-	            _react2.default.createElement('i', {
-	                style: { marginLeft: 5 },
-	                className: (0, _classnames2.default)({ 'hidden': !loading }, 'glyphicon', 'glyphicon-refresh', { 'rotating': loading })
-	            }),
-	            _react2.default.createElement(
-	                'span',
-	                { className: 'count' },
-	                childrenLength
 	            )
 	        )
-	    ));
+	    );
 	};
 	
-	exports.default = renderer;
-
-/***/ },
-/* 182 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	module.exports = __webpack_require__(183);
-
-
-/***/ },
-/* 183 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-present, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactDOMServer
-	 */
-	
-	'use strict';
-	
-	var ReactDefaultInjection = __webpack_require__(43);
-	var ReactServerRendering = __webpack_require__(184);
-	var ReactVersion = __webpack_require__(36);
-	
-	ReactDefaultInjection.inject();
-	
-	var ReactDOMServer = {
-	  renderToString: ReactServerRendering.renderToString,
-	  renderToStaticMarkup: ReactServerRendering.renderToStaticMarkup,
-	  version: ReactVersion
-	};
-	
-	module.exports = ReactDOMServer;
-
-/***/ },
-/* 184 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-present, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactServerRendering
-	 */
-	'use strict';
-	
-	var ReactDOMContainerInfo = __webpack_require__(161);
-	var ReactDefaultBatchingStrategy = __webpack_require__(134);
-	var ReactElement = __webpack_require__(8);
-	var ReactInstrumentation = __webpack_require__(18);
-	var ReactMarkupChecksum = __webpack_require__(163);
-	var ReactReconciler = __webpack_require__(62);
-	var ReactServerBatchingStrategy = __webpack_require__(185);
-	var ReactServerRenderingTransaction = __webpack_require__(128);
-	var ReactUpdates = __webpack_require__(59);
-	
-	var emptyObject = __webpack_require__(26);
-	var instantiateReactComponent = __webpack_require__(119);
-	var invariant = __webpack_require__(7);
-	
-	/**
-	 * @param {ReactElement} element
-	 * @return {string} the HTML markup
-	 */
-	function renderToStringImpl(element, makeStaticMarkup) {
-	  var transaction;
-	  try {
-	    ReactUpdates.injection.injectBatchingStrategy(ReactServerBatchingStrategy);
-	
-	    transaction = ReactServerRenderingTransaction.getPooled(makeStaticMarkup);
-	
-	    return transaction.perform(function () {
-	      if (process.env.NODE_ENV !== 'production') {
-	        ReactInstrumentation.debugTool.onBeginFlush();
-	      }
-	      var componentInstance = instantiateReactComponent(element);
-	      var markup = ReactReconciler.mountComponent(componentInstance, transaction, null, ReactDOMContainerInfo(), emptyObject);
-	      if (process.env.NODE_ENV !== 'production') {
-	        ReactInstrumentation.debugTool.onUnmountComponent(componentInstance._debugID);
-	        ReactInstrumentation.debugTool.onEndFlush();
-	      }
-	      if (!makeStaticMarkup) {
-	        markup = ReactMarkupChecksum.addChecksumToMarkup(markup);
-	      }
-	      return markup;
-	    }, null);
-	  } finally {
-	    ReactServerRenderingTransaction.release(transaction);
-	    // Revert to the DOM batching strategy since these two renderers
-	    // currently share these stateful modules.
-	    ReactUpdates.injection.injectBatchingStrategy(ReactDefaultBatchingStrategy);
-	  }
-	}
-	
-	/**
-	 * Render a ReactElement to its initial HTML. This should only be used on the
-	 * server.
-	 * See https://facebook.github.io/react/docs/top-level-api.html#reactdomserver.rendertostring
-	 */
-	function renderToString(element) {
-	  !ReactElement.isValidElement(element) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'renderToString(): You must pass a valid ReactElement.') : invariant(false) : void 0;
-	  return renderToStringImpl(element, false);
-	}
-	
-	/**
-	 * Similar to renderToString, except this doesn't create extra DOM attributes
-	 * such as data-react-id that React uses internally.
-	 * See https://facebook.github.io/react/docs/top-level-api.html#reactdomserver.rendertostaticmarkup
-	 */
-	function renderToStaticMarkup(element) {
-	  !ReactElement.isValidElement(element) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'renderToStaticMarkup(): You must pass a valid ReactElement.') : invariant(false) : void 0;
-	  return renderToStringImpl(element, true);
-	}
-	
-	module.exports = {
-	  renderToString: renderToString,
-	  renderToStaticMarkup: renderToStaticMarkup
-	};
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
-
-/***/ },
-/* 185 */
-/***/ function(module, exports) {
-
-	/**
-	 * Copyright 2014-present, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactServerBatchingStrategy
-	 */
-	
-	'use strict';
-	
-	var ReactServerBatchingStrategy = {
-	  isBatchingUpdates: false,
-	  batchedUpdates: function (callback) {
-	    // Don't do anything here. During the server rendering we don't want to
-	    // schedule any updates. We will simply ignore them.
-	  }
-	};
-	
-	module.exports = ReactServerBatchingStrategy;
+	exports.defaultRowRenderer = defaultRowRenderer;
 
 /***/ },
 /* 186 */
@@ -23639,6 +23638,106 @@
 
 /***/ },
 /* 187 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _classnames = __webpack_require__(186);
+	
+	var _classnames2 = _interopRequireDefault(_classnames);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var renderer = function renderer(node, treeOptions) {
+	    var id = node.id;
+	    var name = node.name;
+	    var _node$loadOnDemand = node.loadOnDemand;
+	    var loadOnDemand = _node$loadOnDemand === undefined ? false : _node$loadOnDemand;
+	    var children = node.children;
+	    var state = node.state;
+	    var _node$props = node.props;
+	    var props = _node$props === undefined ? {} : _node$props;
+	
+	    var droppable = treeOptions.droppable && props.droppable;
+	    var depth = state.depth;
+	    var open = state.open;
+	    var path = state.path;
+	    var total = state.total;
+	    var _state$loading = state.loading;
+	    var loading = _state$loading === undefined ? false : _state$loading;
+	    var _state$selected = state.selected;
+	    var selected = _state$selected === undefined ? false : _state$selected;
+	
+	    var childrenLength = Object.keys(children).length;
+	    var more = node.hasChildren();
+	
+	    return _react2.default.createElement(
+	        'div',
+	        {
+	            className: (0, _classnames2.default)('infinite-tree-item', { 'infinite-tree-selected': selected }),
+	            'data-id': id,
+	            'data-expanded': more && open,
+	            'data-depth': depth,
+	            'data-path': path,
+	            'data-selected': selected,
+	            'data-children': childrenLength,
+	            'data-total': total,
+	            droppable: droppable
+	        },
+	        _react2.default.createElement(
+	            'div',
+	            {
+	                className: 'infinite-tree-node',
+	                style: { marginLeft: depth * 18 }
+	            },
+	            !more && loadOnDemand && _react2.default.createElement(
+	                'a',
+	                { className: (0, _classnames2.default)(treeOptions.togglerClass, 'infinite-tree-closed') },
+	                _react2.default.createElement('i', { className: 'glyphicon glyphicon-triangle-right' })
+	            ),
+	            more && open && _react2.default.createElement(
+	                'a',
+	                { className: (0, _classnames2.default)(treeOptions.togglerClass) },
+	                _react2.default.createElement('i', { className: 'glyphicon glyphicon-triangle-bottom' })
+	            ),
+	            more && !open && _react2.default.createElement(
+	                'a',
+	                { className: (0, _classnames2.default)(treeOptions.togglerClass, 'infinite-tree-closed') },
+	                _react2.default.createElement('i', { className: 'glyphicon glyphicon-triangle-right' })
+	            ),
+	            _react2.default.createElement('i', {
+	                className: (0, _classnames2.default)('infinite-tree-folder-icon', 'glyphicon', { 'glyphicon-folder-open': more && open }, { 'glyphicon-folder-close': more && !open }, { 'glyphicon-file': !more })
+	            }),
+	            _react2.default.createElement(
+	                'span',
+	                { className: 'infinite-tree-title' },
+	                name
+	            ),
+	            _react2.default.createElement('i', {
+	                style: { marginLeft: 5 },
+	                className: (0, _classnames2.default)({ 'hidden': !loading }, 'glyphicon', 'glyphicon-refresh', { 'rotating': loading })
+	            }),
+	            _react2.default.createElement(
+	                'span',
+	                { className: 'count' },
+	                childrenLength
+	            )
+	        )
+	    );
+	};
+	
+	exports.default = renderer;
+
+/***/ },
+/* 188 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -23890,16 +23989,16 @@
 	exports.buildHTML = buildHTML;
 
 /***/ },
-/* 188 */
+/* 189 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(189);
+	var content = __webpack_require__(190);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(191)(content, {});
+	var update = __webpack_require__(192)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -23916,21 +24015,21 @@
 	}
 
 /***/ },
-/* 189 */
+/* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(190)();
+	exports = module.exports = __webpack_require__(191)();
 	// imports
 	
 	
 	// module
-	exports.push([module.id, ".infinite-tree-scroll {\n  overflow: auto;\n  max-height: 400px; /* Change the height to suit your needs. */\n}\n.infinite-tree-table {\n  width: 100%;\n}\n.infinite-tree-content {\n  outline: 0;\n}\n.infinite-tree-content .infinite-tree-selected.infinite-tree-item,\n.infinite-tree-content .infinite-tree-selected.infinite-tree-item:hover {\n  background: #deecfd;\n  border: 1px solid #06c;\n}\n.infinite-tree-content .infinite-tree-item {\n  border: 1px solid transparent;\n  cursor: default;\n}\n.infinite-tree-content .infinite-tree-item:hover {\n  background: #f2fdff;\n}\n.infinite-tree-content .infinite-tree-node {\n  position: relative;\n}\n.infinite-tree-content .infinite-tree-toggler {\n  color: #666;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.infinite-tree-content .infinite-tree-toggler:hover {\n  color: #333;\n  text-decoration: none;\n}\n.infinite-tree-content .infinite-tree-title {\n  cursor: pointer;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.infinite-tree-no-data {\n  text-align: center;\n}\n", ""]);
+	exports.push([module.id, ".infinite-tree-scroll {\n  overflow: auto;\n  max-height: 400px; /* Change the height to suit your needs. */\n}\n.infinite-tree-table {\n  width: 100%;\n}\n.infinite-tree-content {\n  outline: 0;\n  position: relative;\n}\n.infinite-tree-content .infinite-tree-selected.infinite-tree-item,\n.infinite-tree-content .infinite-tree-selected.infinite-tree-item:hover {\n  background: #deecfd;\n  border: 1px solid #06c;\n}\n.infinite-tree-content .infinite-tree-item {\n  border: 1px solid transparent;\n  cursor: default;\n}\n.infinite-tree-content .infinite-tree-item:hover {\n  background: #f2fdff;\n}\n.infinite-tree-content .infinite-tree-node {\n  position: relative;\n}\n.infinite-tree-content .infinite-tree-toggler {\n  color: #666;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.infinite-tree-content .infinite-tree-toggler:hover {\n  color: #333;\n  text-decoration: none;\n}\n.infinite-tree-content .infinite-tree-title {\n  cursor: pointer;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n.infinite-tree-no-data {\n  text-align: center;\n}\n", ""]);
 	
 	// exports
 
 
 /***/ },
-/* 190 */
+/* 191 */
 /***/ function(module, exports) {
 
 	/*
@@ -23986,7 +24085,7 @@
 
 
 /***/ },
-/* 191 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -24238,16 +24337,16 @@
 
 
 /***/ },
-/* 192 */
+/* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(193);
+	var content = __webpack_require__(194);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(191)(content, {});
+	var update = __webpack_require__(192)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -24264,10 +24363,10 @@
 	}
 
 /***/ },
-/* 193 */
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(190)();
+	exports = module.exports = __webpack_require__(191)();
 	// imports
 	
 	
@@ -24278,16 +24377,16 @@
 
 
 /***/ },
-/* 194 */
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(195);
+	var content = __webpack_require__(196);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(191)(content, {});
+	var update = __webpack_require__(192)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -24304,10 +24403,10 @@
 	}
 
 /***/ },
-/* 195 */
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(190)();
+	exports = module.exports = __webpack_require__(191)();
 	// imports
 	
 	

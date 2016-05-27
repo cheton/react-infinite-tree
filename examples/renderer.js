@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOMServer from 'react-dom/server';
 import classNames from 'classnames';
 
 const renderer = (node, treeOptions) => {
@@ -9,7 +8,7 @@ const renderer = (node, treeOptions) => {
     const childrenLength = Object.keys(children).length;
     const more = node.hasChildren();
 
-    return ReactDOMServer.renderToString(
+    return (
         <div
             className={classNames(
                 'infinite-tree-item',
@@ -28,31 +27,21 @@ const renderer = (node, treeOptions) => {
                 className="infinite-tree-node"
                 style={{ marginLeft: depth * 18 }}
             >
-                <a
-                    className={(() => {
-                        if (!more && loadOnDemand) {
-                            return classNames(treeOptions.togglerClass, 'infinite-tree-closed');
-                        }
-                        if (more && open) {
-                            return classNames(treeOptions.togglerClass);
-                        }
-                        if (more && !open) {
-                            return classNames(treeOptions.togglerClass, 'infinite-tree-closed');
-                        }
-                        return '';
-                    })()}
-                >
-                    {!more && loadOnDemand &&
+                {!more && loadOnDemand &&
+                    <a className={classNames(treeOptions.togglerClass, 'infinite-tree-closed')}>
                         <i className="glyphicon glyphicon-triangle-right" />
-                    }
-                    {more && open &&
+                    </a>
+                }
+                {more && open &&
+                    <a className={classNames(treeOptions.togglerClass)}>
                         <i className="glyphicon glyphicon-triangle-bottom" />
-                    }
-                    {more && !open &&
+                    </a>
+                }
+                {more && !open &&
+                    <a className={classNames(treeOptions.togglerClass, 'infinite-tree-closed')}>
                         <i className="glyphicon glyphicon-triangle-right" />
-                    }
-                </a>
-
+                    </a>
+                }
                 <i
                     className={classNames(
                         'infinite-tree-folder-icon',
@@ -61,11 +50,8 @@ const renderer = (node, treeOptions) => {
                         { 'glyphicon-folder-close': more && !open },
                         { 'glyphicon-file': !more }
                     )}
-                >
-                </i>
-
+                />
                 <span className="infinite-tree-title">{name}</span>
-
                 <i
                     style={{ marginLeft: 5 }}
                     className={classNames(
@@ -75,7 +61,6 @@ const renderer = (node, treeOptions) => {
                         { 'rotating': loading }
                     )}
                 />
-
                 <span className="count">{childrenLength}</span>
             </div>
         </div>

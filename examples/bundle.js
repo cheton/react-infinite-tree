@@ -1134,7 +1134,7 @@
 	var warning = emptyFunction;
 	
 	if (process.env.NODE_ENV !== 'production') {
-	  warning = function (condition, format) {
+	  warning = function warning(condition, format) {
 	    for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
 	      args[_key - 2] = arguments[_key];
 	    }
@@ -1182,6 +1182,7 @@
 	 * LICENSE file in the root directory of this source tree. An additional grant
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 *
+	 * 
 	 */
 	
 	function makeEmptyFunction(arg) {
@@ -1195,7 +1196,7 @@
 	 * primarily useful idiomatically for overridable function endpoints which
 	 * always need to be callable, since JS lacks a null-call idiom ala Cocoa.
 	 */
-	function emptyFunction() {}
+	var emptyFunction = function emptyFunction() {};
 	
 	emptyFunction.thatReturns = makeEmptyFunction;
 	emptyFunction.thatReturnsFalse = makeEmptyFunction(false);
@@ -2084,11 +2085,11 @@
 	 * because of Facebook's testing infrastructure.
 	 */
 	if (performance.now) {
-	  performanceNow = function () {
+	  performanceNow = function performanceNow() {
 	    return performance.now();
 	  };
 	} else {
-	  performanceNow = function () {
+	  performanceNow = function performanceNow() {
 	    return Date.now();
 	  };
 	}
@@ -3176,7 +3177,7 @@
 	 * @param {object} obj
 	 * @return {object}
 	 */
-	var keyMirror = function (obj) {
+	var keyMirror = function keyMirror(obj) {
 	  var ret = {};
 	  var key;
 	  !(obj instanceof Object && !Array.isArray(obj)) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'keyMirror(...): Argument must be an object.') : invariant(false) : void 0;
@@ -3248,7 +3249,7 @@
 	 * 'xa12' in that case. Resolve keys you want to use once at startup time, then
 	 * reuse those resolutions.
 	 */
-	var keyOf = function (oneKeyObj) {
+	var keyOf = function keyOf(oneKeyObj) {
 	  var key;
 	  for (key in oneKeyObj) {
 	    if (!oneKeyObj.hasOwnProperty(key)) {
@@ -11738,6 +11739,7 @@
 	 * LICENSE file in the root directory of this source tree. An additional grant
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 *
+	 * 
 	 * @typechecks static-only
 	 */
 	
@@ -11745,9 +11747,6 @@
 	
 	/**
 	 * Memoizes the return value of a function that accepts one string argument.
-	 *
-	 * @param {function} callback
-	 * @return {function}
 	 */
 	
 	function memoizeStringOnly(callback) {
@@ -16992,18 +16991,18 @@
 	   * @param {function} callback Callback function.
 	   * @return {object} Object with a `remove` method.
 	   */
-	  listen: function (target, eventType, callback) {
+	  listen: function listen(target, eventType, callback) {
 	    if (target.addEventListener) {
 	      target.addEventListener(eventType, callback, false);
 	      return {
-	        remove: function () {
+	        remove: function remove() {
 	          target.removeEventListener(eventType, callback, false);
 	        }
 	      };
 	    } else if (target.attachEvent) {
 	      target.attachEvent('on' + eventType, callback);
 	      return {
-	        remove: function () {
+	        remove: function remove() {
 	          target.detachEvent('on' + eventType, callback);
 	        }
 	      };
@@ -17018,11 +17017,11 @@
 	   * @param {function} callback Callback function.
 	   * @return {object} Object with a `remove` method.
 	   */
-	  capture: function (target, eventType, callback) {
+	  capture: function capture(target, eventType, callback) {
 	    if (target.addEventListener) {
 	      target.addEventListener(eventType, callback, true);
 	      return {
-	        remove: function () {
+	        remove: function remove() {
 	          target.removeEventListener(eventType, callback, true);
 	        }
 	      };
@@ -17036,7 +17035,7 @@
 	    }
 	  },
 	
-	  registerDefault: function () {}
+	  registerDefault: function registerDefault() {}
 	};
 	
 	module.exports = EventListener;
@@ -17732,7 +17731,7 @@
 	 * LICENSE file in the root directory of this source tree. An additional grant
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 *
-	 * @typechecks
+	 * 
 	 */
 	
 	var isTextNode = __webpack_require__(144);
@@ -17741,10 +17740,6 @@
 	
 	/**
 	 * Checks if a given DOM node contains or is another DOM node.
-	 *
-	 * @param {?DOMNode} outerNode Outer DOM node.
-	 * @param {?DOMNode} innerNode Inner DOM node.
-	 * @return {boolean} True if `outerNode` contains or is `innerNode`.
 	 */
 	function containsNode(outerNode, innerNode) {
 	  if (!outerNode || !innerNode) {
@@ -17755,7 +17750,7 @@
 	    return false;
 	  } else if (isTextNode(innerNode)) {
 	    return containsNode(outerNode, innerNode.parentNode);
-	  } else if (outerNode.contains) {
+	  } else if ('contains' in outerNode) {
 	    return outerNode.contains(innerNode);
 	  } else if (outerNode.compareDocumentPosition) {
 	    return !!(outerNode.compareDocumentPosition(innerNode) & 16);
@@ -20973,7 +20968,7 @@
 	                    var itemTarget = null;
 	                    var clickToggler = false;
 	
-	                    if (event.target && event.currentTarget) {
+	                    if (event.target) {
 	                        itemTarget = event.target !== event.currentTarget ? event.target : null;
 	                    } else if (event.srcElement) {
 	                        // IE8
@@ -21008,12 +21003,16 @@
 	            },
 	            // https://developer.mozilla.org/en-US/docs/Web/Events/dragstart
 	            // The dragstart event is fired when the user starts dragging an element or text selection.
-	            'dragstart': function dragstart(e) {
-	                _this.draggableTarget = e.target || e.srcElement;
+	            'dragstart': function dragstart(event) {
+	                event = event || window.event;
+	
+	                _this.draggableTarget = event.target || event.srcElement;
 	            },
 	            // https://developer.mozilla.org/en-US/docs/Web/Events/dragend
 	            // The dragend event is fired when a drag operation is being ended (by releasing a mouse button or hitting the escape key).
-	            'dragend': function dragend(e) {
+	            'dragend': function dragend(event) {
+	                event = event || window.event;
+	
 	                var _this$options$droppab = _this.options.droppable.hoverClass;
 	                var hoverClass = _this$options$droppab === undefined ? '' : _this$options$droppab;
 	
@@ -21029,14 +21028,16 @@
 	            },
 	            // https://developer.mozilla.org/en-US/docs/Web/Events/dragenter
 	            // The dragenter event is fired when a dragged element or text selection enters a valid drop target.
-	            'dragenter': function dragenter(e) {
+	            'dragenter': function dragenter(event) {
+	                event = event || window.event;
+	
 	                var itemTarget = null;
 	
-	                if (e.target && e.currentTarget) {
-	                    itemTarget = e.target !== e.currentTarget ? e.target : null;
-	                } else if (e.srcElement) {
+	                if (event.target) {
+	                    itemTarget = event.target !== event.currentTarget ? event.target : null;
+	                } else if (event.srcElement) {
 	                    // IE8
-	                    itemTarget = e.srcElement;
+	                    itemTarget = event.srcElement;
 	                }
 	
 	                while (itemTarget && itemTarget.parentElement !== _this.contentElement) {
@@ -21066,7 +21067,7 @@
 	                    var id = itemTarget.getAttribute(_this.options.nodeIdAttr);
 	                    var node = _this.getNodeById(id);
 	
-	                    canDrop = !!accept.call(_this, {
+	                    canDrop = !!accept.call(_this, event, {
 	                        type: 'dragenter',
 	                        draggableTarget: _this.draggableTarget,
 	                        droppableTarget: itemTarget,
@@ -21081,14 +21082,18 @@
 	            },
 	            // https://developer.mozilla.org/en-US/docs/Web/Events/dragover
 	            // The dragover event is fired when an element or text selection is being dragged over a valid drop target (every few hundred milliseconds).
-	            'dragover': function dragover(e) {
-	                (0, _helper.preventDefault)(e);
+	            'dragover': function dragover(event) {
+	                event = event || window.event;
+	
+	                (0, _helper.preventDefault)(event);
 	            },
 	            // https://developer.mozilla.org/en-US/docs/Web/Events/drop
 	            // The drop event is fired when an element or text selection is dropped on a valid drop target.
-	            'drop': function drop(e) {
+	            'drop': function drop(event) {
+	                event = event || window.event;
+	
 	                // prevent default action (open as link for some elements)
-	                (0, _helper.preventDefault)(e);
+	                (0, _helper.preventDefault)(event);
 	
 	                if (!(_this.draggableTarget && _this.droppableTarget)) {
 	                    return;
@@ -21106,7 +21111,7 @@
 	                var canDrop = true; // Defaults to true
 	
 	                if (typeof accept === 'function') {
-	                    canDrop = !!accept.call(_this, {
+	                    canDrop = !!accept.call(_this, event, {
 	                        type: 'drop',
 	                        draggableTarget: _this.draggableTarget,
 	                        droppableTarget: _this.droppableTarget,
@@ -21115,7 +21120,7 @@
 	                }
 	
 	                if (canDrop && typeof drop === 'function') {
-	                    drop.call(_this, e, {
+	                    drop.call(_this, event, {
 	                        draggableTarget: _this.draggableTarget,
 	                        droppableTarget: _this.droppableTarget,
 	                        node: node
@@ -21152,6 +21157,8 @@
 	    }
 	
 	    InfiniteTree.prototype.create = function create() {
+	        var _this2 = this;
+	
 	        if (!this.options.el) {
 	            error('The element option is not specified.');
 	        }
@@ -21190,7 +21197,15 @@
 	            scrollElem: this.scrollElement,
 	            contentElem: this.contentElement,
 	            no_data_text: this.options.noDataText,
-	            no_data_class: this.options.noDataClass
+	            no_data_class: this.options.noDataClass,
+	            callbacks: {
+	                clusterWillChange: function clusterWillChange() {
+	                    _this2.emit('clusterWillChange');
+	                },
+	                clusterChanged: function clusterChanged() {
+	                    _this2.emit('clusterDidChange');
+	                }
+	            }
 	        });
 	
 	        (0, _helper.addEventListener)(this.contentElement, 'click', this.contentListener.click);
@@ -21251,7 +21266,7 @@
 	
 	
 	    InfiniteTree.prototype.addChildNodes = function addChildNodes(newNodes, index, parentNode) {
-	        var _this2 = this;
+	        var _this3 = this;
 	
 	        newNodes = [].concat(newNodes || []); // Ensure array
 	        if (newNodes.length === 0) {
@@ -21284,7 +21299,7 @@
 	        var deleteCount = parentNode.state.total;
 	        var nodes = (0, _flattree.flatten)(parentNode.children, { openNodes: this.state.openNodes });
 	        var rows = nodes.map(function (node) {
-	            return _this2.options.rowRenderer(node, _this2.options);
+	            return _this3.options.rowRenderer(node, _this3.options);
 	        });
 	
 	        if (parentNode === this.state.rootNode) {
@@ -21304,9 +21319,9 @@
 	
 	        // Update the lookup table with newly added nodes
 	        parentNode.children.slice(index).forEach(function (childNode) {
-	            _this2.flattenNode(childNode).forEach(function (node) {
+	            _this3.flattenNode(childNode).forEach(function (node) {
 	                if (node.id !== undefined) {
-	                    _this2.nodeTable.set(node.id, node);
+	                    _this3.nodeTable.set(node.id, node);
 	                }
 	            });
 	        });
@@ -21553,7 +21568,7 @@
 	
 	
 	    InfiniteTree.prototype.loadData = function loadData() {
-	        var _this3 = this;
+	        var _this4 = this;
 	
 	        var data = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
 	
@@ -21580,14 +21595,14 @@
 	            // Update the lookup table with newly added nodes
 	            this.flattenChildNodes(this.state.rootNode).forEach(function (node) {
 	                if (node.id !== undefined) {
-	                    _this3.nodeTable.set(node.id, node);
+	                    _this4.nodeTable.set(node.id, node);
 	                }
 	            });
 	        }
 	
 	        // Update rows
 	        this.rows = this.nodes.map(function (node) {
-	            return _this3.options.rowRenderer(node, _this3.options);
+	            return _this4.options.rowRenderer(node, _this4.options);
 	        });
 	
 	        // Updates list with new data
@@ -21599,7 +21614,7 @@
 	
 	
 	    InfiniteTree.prototype.openNode = function openNode(node) {
-	        var _this4 = this;
+	        var _this5 = this;
 	
 	        if (!ensureNodeInstance(node)) {
 	            return false;
@@ -21637,10 +21652,10 @@
 	            this.options.loadNodes(node, function (err, nodes) {
 	                // Set loading state to false
 	                node.state.loading = false;
-	                _this4.rows[nodeIndex] = _this4.options.rowRenderer(node, _this4.options);
+	                _this5.rows[nodeIndex] = _this5.options.rowRenderer(node, _this5.options);
 	
 	                // Updates list with new data
-	                _this4.update();
+	                _this5.update();
 	
 	                if (err) {
 	                    return;
@@ -21656,13 +21671,13 @@
 	
 	                // Append child nodes
 	                nodes.forEach(function (childNode) {
-	                    _this4.appendChildNode(childNode, node);
+	                    _this5.appendChildNode(childNode, node);
 	                });
 	
 	                // Ensure the node has children to prevent from infinite loop
 	                if (node.hasChildren()) {
 	                    // Call openNode again
-	                    _this4.openNode(node);
+	                    _this5.openNode(node);
 	                }
 	            });
 	
@@ -21675,7 +21690,7 @@
 	
 	        var nodes = (0, _flattree.flatten)(node.children, { openNodes: this.state.openNodes });
 	        var rows = nodes.map(function (node) {
-	            return _this4.options.rowRenderer(node, _this4.options);
+	            return _this5.options.rowRenderer(node, _this5.options);
 	        });
 	
 	        // Update nodes & rows
@@ -21689,7 +21704,7 @@
 	        if (nodes.length > 0 && !this.nodeTable.get(nodes[0])) {
 	            nodes.forEach(function (node) {
 	                if (node.id !== undefined) {
-	                    _this4.nodeTable.set(node.id, node);
+	                    _this5.nodeTable.set(node.id, node);
 	                }
 	            });
 	        }
@@ -21708,7 +21723,7 @@
 	
 	
 	    InfiniteTree.prototype.removeChildNodes = function removeChildNodes(parentNode) {
-	        var _this5 = this;
+	        var _this6 = this;
 	
 	        if (!ensureNodeInstance(parentNode)) {
 	            return false;
@@ -21760,14 +21775,14 @@
 	        {
 	            (function () {
 	                // Update open nodes and lookup table
-	                var childNodes = _this5.flattenChildNodes(parentNode);
+	                var childNodes = _this6.flattenChildNodes(parentNode);
 	
-	                _this5.state.openNodes = _this5.state.openNodes.filter(function (node) {
+	                _this6.state.openNodes = _this6.state.openNodes.filter(function (node) {
 	                    return childNodes.indexOf(node) < 0;
 	                });
 	
 	                childNodes.forEach(function (node) {
-	                    _this5.nodeTable.unset(node.id);
+	                    _this6.nodeTable.unset(node.id);
 	                });
 	            })();
 	        }
@@ -21783,7 +21798,7 @@
 	
 	
 	    InfiniteTree.prototype.removeNode = function removeNode(node) {
-	        var _this6 = this;
+	        var _this7 = this;
 	
 	        if (!ensureNodeInstance(node)) {
 	            return false;
@@ -21845,14 +21860,14 @@
 	        {
 	            (function () {
 	                // Update open nodes and lookup table
-	                var nodes = _this6.flattenNode(node);
+	                var nodes = _this7.flattenNode(node);
 	
-	                _this6.state.openNodes = _this6.state.openNodes.filter(function (node) {
+	                _this7.state.openNodes = _this7.state.openNodes.filter(function (node) {
 	                    return nodes.indexOf(node) < 0;
 	                });
 	
 	                nodes.forEach(function (node) {
-	                    _this6.nodeTable.unset(node.id);
+	                    _this7.nodeTable.unset(node.id);
 	                });
 	            })();
 	        }

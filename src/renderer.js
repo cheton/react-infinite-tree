@@ -1,3 +1,4 @@
+/* eslint react/jsx-indent: 0 */
 import React from 'react';
 import classNames from 'classnames';
 

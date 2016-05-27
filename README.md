@@ -82,6 +82,9 @@ class App extends React.Component {
                     }}
                     rowRenderer={(node, treeOptions) => {
                         const { id, name, loadOnDemand = false, children, state, props = {} } = node;
+                        const droppable = treeOptions.droppable;
+                        const { depth, open, path, total, selected = false } = state;
+                        const more = node.hasChildren();
 
                         return (
                             <div
@@ -90,6 +93,7 @@ class App extends React.Component {
                                     { 'infinite-tree-selected': selected }
                                 )}
                                 data-id={id}
+                                droppable={droppable}
                             >
                                 <div
                                     className="infinite-tree-node"

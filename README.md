@@ -28,6 +28,7 @@ npm install --save react-infinite-tree
 ## Example
 ```jsx
 import React from 'react';
+import classNames from 'classnames';
 import InfiniteTree from 'react-infinite-tree';
 import 'react-infinite-tree/dist/react-infinite-tree.css';
 
@@ -78,6 +79,35 @@ class App extends React.Component {
                         setTimeout(() => {
                             done(null, nodes);
                         }, 1000);
+                    }}
+                    rowRenderer={(node, treeOptions) => {
+                        const { id, name, loadOnDemand = false, children, state, props = {} } = node;
+
+                        return (
+                            <div
+                                className={classNames(
+                                    'infinite-tree-item',
+                                    { 'infinite-tree-selected': selected }
+                                )}
+                                data-id={id}
+                            >
+                                <div
+                                    className="infinite-tree-node"
+                                    style={{ marginLeft: depth * 18 }}
+                                >
+                                    {!more && loadOnDemand &&
+                                        <a className={classNames(treeOptions.togglerClass, 'infinite-tree-closed')}>►</a>
+                                    }
+                                    {more && open &&
+                                        <a className={classNames(treeOptions.togglerClass)}>▼</a>
+                                    }
+                                    {more && !open &&
+                                        <a className={classNames(treeOptions.togglerClass, 'infinite-tree-closed')}>►</a>
+                                    }
+                                    <span className="infinite-tree-title">{name}</span>
+                                </div>
+                            </div>
+                        );
                     }}
                     selectable={true}
                     shouldSelectNode={(node) => {

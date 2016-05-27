@@ -99,6 +99,10 @@ class App extends React.Component {
                     onSelectNode={(node) => {
                         console.log('select node:', node);
                     }}
+                    onClusterWillChange={() => {
+                    }}
+                    onClusterDidChange={() => {
+                    }}
                     onContentWillUpdate={() => {
                     }}
                     onContentDidUpdate={() => {

@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import ReactDOMServer from 'react-dom/server';
 import InfiniteTree from 'infinite-tree';
+import { defaultRowRenderer } from './renderer';
 
 const lcfirst = (str) => {
     str += '';
@@ -26,6 +28,16 @@ module.exports = class extends React.Component {
 
         const el = ReactDOM.findDOMNode(this);
         options.el = el;
+
+        const rowRenderer = options.rowRenderer || defaultRowRenderer;
+        options.rowRenderer = (node, opts) => {
+            let row = rowRenderer(node, opts);
+            if (typeof row === 'object') {
+                // Use ReactDOMServer.renderToString() to render React Component
+                row = ReactDOMServer.renderToString(row);
+            }
+            return row;
+        };
 
         this.tree = new InfiniteTree(options);
 

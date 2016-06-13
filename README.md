@@ -1,4 +1,5 @@
-# react-infinite-tree [![build status](https://travis-ci.org/cheton/react-infinite-tree.svg?branch=master)](https://travis-ci.org/cheton/react-infinite-tree) [![Coverage Status](https://coveralls.io/repos/cheton/react-infinite-tree/badge.svg)](https://coveralls.io/r/cheton/react-infinite-tree)
+# react-infinite-tree [![build status](https://travis-ci.org/cheton/react-infinite-tree.svg?branch=master)](https://travis-ci.org/cheton/react-infinite-tree) [![Coverage Status](https://coveralls.io/repos/github/cheton/react-infinite-tree/badge.svg?branch=master)](https://coveralls.io/github/cheton/react-infinite-tree?branch=master)
+
 [![NPM](https://nodei.co/npm/react-infinite-tree.png?downloads=true&stars=true)](https://nodei.co/npm/react-infinite-tree/)
 
 The [infinite-tree](https://github.com/cheton/infinite-tree) library for React.

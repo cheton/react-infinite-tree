@@ -85,9 +85,13 @@ class App extends React.Component {
                         }
                         return true;
                     }}
+                    onDoubleClick={(event) => {
+                        const target = event.target || event.srcElement; // IE8
+                        console.log('onDoubleClick', target);
+                    }}
                     onClick={(event) => {
                         const target = event.target || event.srcElement; // IE8
-                        console.log('click', target);
+                        console.log('onClick', target);
                     }}
                     onDropNode={(node, e) => {
                         const source = e.dataTransfer.getData('text');

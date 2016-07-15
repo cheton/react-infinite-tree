@@ -125,6 +125,9 @@ class App extends React.Component {
                         const target = event.target || event.srcElement; // IE8
                         console.log('click:', target);
                     }}
+                    onDoubleClick={(event) => {
+                        console.log('double click:', target);
+                    }}
                     onOpenNode={(node) => {
                         console.log('open node:', node);
                     }}

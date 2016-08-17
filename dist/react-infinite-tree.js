@@ -1,4 +1,4 @@
-/*! react-infinite-tree v0.5.0 | (c) 2016 Cheton Wu <cheton@gmail.com> | MIT | https://github.com/cheton/react-infinite-tree */
+/*! react-infinite-tree v0.5.1 | (c) 2016 Cheton Wu <cheton@gmail.com> | MIT | https://github.com/cheton/react-infinite-tree */
 exports["InfiniteTree"] =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -169,11 +169,7 @@ exports["InfiniteTree"] =
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            return _react2.default.createElement(
-	                'div',
-	                { className: this.props.className },
-	                this.props.children
-	            );
+	            return _react2.default.createElement('div', this.props);
 	        }
 	    }]);
 

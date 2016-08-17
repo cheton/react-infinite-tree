@@ -21423,11 +21423,7 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            return _react2.default.createElement(
-	                'div',
-	                { className: this.props.className },
-	                this.props.children
-	            );
+	            return _react2.default.createElement('div', this.props);
 	        }
 	    }]);
 	

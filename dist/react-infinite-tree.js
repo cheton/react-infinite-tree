@@ -1,4 +1,4 @@
-/*! react-infinite-tree v0.5.1 | (c) 2016 Cheton Wu <cheton@gmail.com> | MIT | https://github.com/cheton/react-infinite-tree */
+/*! react-infinite-tree v0.5.2 | (c) 2017 Cheton Wu <cheton@gmail.com> | MIT | https://github.com/cheton/react-infinite-tree */
 exports["InfiniteTree"] =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -120,8 +120,9 @@ exports["InfiniteTree"] =
 	            var _props = this.props;
 	            var children = _props.children;
 	            var className = _props.className;
+	            var style = _props.style;
 
-	            var options = _objectWithoutProperties(_props, ['children', 'className']);
+	            var options = _objectWithoutProperties(_props, ['children', 'className', 'style']);
 
 	            var el = _reactDom2.default.findDOMNode(this);
 	            options.el = el;
@@ -169,7 +170,17 @@ exports["InfiniteTree"] =
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            return _react2.default.createElement('div', this.props);
+	            var _props2 = this.props;
+	            var children = _props2.children;
+	            var className = _props2.className;
+	            var style = _props2.style;
+
+
+	            return _react2.default.createElement(
+	                'div',
+	                { className: className, style: style },
+	                children
+	            );
 	        }
 	    }]);
 

@@ -1,6 +1,6 @@
 {
   "name": "react-infinite-tree",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "The infinite-tree library for React.",
   "main": "lib/index.js",
   "scripts": {

@@ -25,7 +25,7 @@ module.exports = class extends React.Component {
     };
 
     componentDidMount() {
-        const { children, className, ...options } = this.props;
+        const { children, className, style, ...options } = this.props;
 
         const el = ReactDOM.findDOMNode(this);
         options.el = el;
@@ -67,8 +67,12 @@ module.exports = class extends React.Component {
         this.tree = null;
     }
     render() {
+        const { children, className, style } = this.props;
+
         return (
-            <div {...this.props} />
+            <div className={className} style={style}>
+                {children}
+            </div>
         );
     }
 };

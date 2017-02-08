@@ -85,13 +85,33 @@ class App extends React.Component {
                         }
                         return true;
                     }}
+                    onClick={(event) => {
+                        const target = event.target || event.srcElement; // IE8
+                        console.log('onClick', target);
+                    }}
                     onDoubleClick={(event) => {
                         const target = event.target || event.srcElement; // IE8
                         console.log('onDoubleClick', target);
                     }}
-                    onClick={(event) => {
+                    onKeyDown={(event) => {
                         const target = event.target || event.srcElement; // IE8
-                        console.log('onClick', target);
+                        console.log('onKeyDown', target);
+                        event.preventDefault();
+
+                        const node = this.tree.getSelectedNode();
+                        const nodeIndex = this.tree.getSelectedIndex();
+
+                        if (event.keyCode === 37) { // Left
+                            this.tree.closeNode(node);
+                        } else if (event.keyCode === 38) { // Up
+                            const prevNode = this.tree.nodes[nodeIndex - 1] || node;
+                            this.tree.selectNode(prevNode);
+                        } else if (event.keyCode === 39) { // Right
+                            this.tree.openNode(node);
+                        } else if (event.keyCode === 40) { // Down
+                            const nextNode = this.tree.nodes[nodeIndex + 1] || node;
+                            this.tree.selectNode(nextNode);
+                        }
                     }}
                     onDropNode={(node, e) => {
                         const source = e.dataTransfer.getData('text');

@@ -1,4 +1,4 @@
-/*! react-infinite-tree v0.5.2 | (c) 2017 Cheton Wu <cheton@gmail.com> | MIT | https://github.com/cheton/react-infinite-tree */
+/*! react-infinite-tree v0.6.0 | (c) 2017 Cheton Wu <cheton@gmail.com> | MIT | https://github.com/cheton/react-infinite-tree */
 exports["InfiniteTree"] =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -102,6 +102,8 @@ exports["InfiniteTree"] =
 	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(_class2)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.tree = null, _this.eventHandlers = {
 	            onClick: null,
 	            onDoubleClick: null,
+	            onKeyDown: null,
+	            onKeyUp: null,
 	            onClusterWillChange: null,
 	            onClusterDidChange: null,
 	            onContentWillUpdate: null,

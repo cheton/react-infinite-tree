@@ -1,6 +1,6 @@
 {
   "name": "react-infinite-tree",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "The infinite-tree library for React.",
   "main": "lib/index.js",
   "scripts": {
@@ -42,7 +42,7 @@
   "peerDependencies": {
     "react": "^0.14.0 || ^15.0.0-0",
     "react-dom": "^0.14.0 || ^15.0.0-0",
-    "infinite-tree": ">=1.8.0"
+    "infinite-tree": ">=1.8.1"
   },
   "dependencies": {},
   "devDependencies": {

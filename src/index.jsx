@@ -15,6 +15,8 @@ module.exports = class extends React.Component {
     eventHandlers = {
         onClick: null,
         onDoubleClick: null,
+        onKeyDown: null,
+        onKeyUp: null,
         onClusterWillChange: null,
         onClusterDidChange: null,
         onContentWillUpdate: null,

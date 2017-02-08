@@ -16,7 +16,7 @@ Demo: http://cheton.github.io/react-infinite-tree
 * A rich set of [APIs](https://github.com/cheton/infinite-tree#api-documentation)
 
 ## Browser Support
-![Chrome](https://raw.github.com/alrra/browser-logos/master/chrome/chrome_48x48.png)<br>Chrome | ![Edge](https://raw.github.com/alrra/browser-logos/master/edge/edge_48x48.png)<br>Edge | ![Firefox](https://raw.github.com/alrra/browser-logos/master/firefox/firefox_48x48.png)<br>Firefox | ![IE](https://raw.github.com/alrra/browser-logos/master/internet-explorer/internet-explorer_48x48.png)<br>IE | ![Opera](https://raw.github.com/alrra/browser-logos/master/opera/opera_48x48.png)<br>Opera | ![Safari](https://raw.github.com/alrra/browser-logos/master/safari/safari_48x48.png)<br>Safari
+![Chrome](https://github.com/alrra/browser-logos/raw/master/src/chrome/chrome_48x48.png)<br>Chrome | ![Edge](https://github.com/alrra/browser-logos/raw/master/src/edge/edge_48x48.png)<br>Edge | ![Firefox](https://github.com/alrra/browser-logos/raw/master/src/firefox/firefox_48x48.png)<br>Firefox | ![IE](https://github.com/alrra/browser-logos/raw/master/src/internet-explorer/internet-explorer_48x48.png)<br>IE | ![Opera](https://github.com/alrra/browser-logos/raw/master/src/opera/opera_48x48.png)<br>Opera | ![Safari](https://github.com/alrra/browser-logos/raw/master/src/safari/safari_48x48.png)<br>Safari
 --- | --- | --- | --- | --- | --- |
  Yes | Yes | Yes| 9+ | Yes | Yes | 
 
@@ -122,11 +122,18 @@ class App extends React.Component {
                         return true;
                     }}
                     onClick={(event) => {
+                        // click event
                         const target = event.target || event.srcElement; // IE8
                         console.log('click:', target);
                     }}
                     onDoubleClick={(event) => {
-                        console.log('double click:', target);
+                        // dblclick event
+                    }}
+                    onKeyDown={(event) => {
+                        // keydown event
+                    }}
+                    onKeyUp={(event) => {
+                        // keyup event
                     }}
                     onOpenNode={(node) => {
                         console.log('open node:', node);

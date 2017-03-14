@@ -72,6 +72,7 @@
     "stylus-loader": "^2.4.0",
     "tap": "^10.1.0",
     "webpack": "^2.2.1",
-    "webpack-dev-server": "^2.3.0"
+    "webpack-dev-server": "^2.3.0",
+    "which": "~1.2.12"
   }
 }

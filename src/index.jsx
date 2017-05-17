@@ -23,7 +23,10 @@ module.exports = class extends React.Component {
         onContentDidUpdate: null,
         onOpenNode: null,
         onCloseNode: null,
-        onSelectNode: null
+        onSelectNode: null,
+        onWillOpenNode: null,
+        onWillCloseNode: null,
+        onWillSelectNode: null
     };
 
     componentDidMount() {

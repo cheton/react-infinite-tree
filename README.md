@@ -135,14 +135,17 @@ class App extends React.Component {
                     onKeyUp={(event) => {
                         // keyup event
                     }}
-                    onOpenNode={(node) => {
-                        console.log('open node:', node);
-                    }}
                     onCloseNode={(node) => {
-                        console.log('close node:', node);
+                    }}
+                    onOpenNode={(node) => {
                     }}
                     onSelectNode={(node) => {
-                        console.log('select node:', node);
+                    }}
+                    onWillCloseNode={(node) => {
+                    }}
+                    onWillOpenNode={(node) => {
+                    }}
+                    onWillSelectNode={(node) => {
                     }}
                     onClusterWillChange={() => {
                     }}

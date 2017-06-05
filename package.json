@@ -54,7 +54,7 @@
     "babel-preset-react": "~6.24.1",
     "babel-preset-stage-0": "~6.24.1",
     "classnames": "~2.2.5",
-    "coveralls": "tap test/*.js --coverage --coverage-report=text-lcov --nyc-arg=--require --nyc-arg=babel-register --nyc-arg=--require --nyc-arg=babel-polyfill | coveralls",
+    "coveralls": "~2.13.1",
     "css-loader": "~0.28.1",
     "eslint": "~3.19.0",
     "eslint-config-trendmicro": "~0.5.1",

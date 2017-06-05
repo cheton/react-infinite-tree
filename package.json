@@ -7,7 +7,7 @@
     "prepublish": "npm run lint && npm test && npm run build && npm run dist && npm run stylus && npm run build-examples && npm run release",
     "build": "babel --out-dir ./lib ./src",
     "build-examples": "cd examples; webpack",
-    "test": "./babel-tap --coverage test/*.js",
+    "test": "tap test/*.js --coverage --nyc-arg=--require --nyc-arg=babel-register --nyc-arg=--require --nyc-arg=babel-polyfill",
     "dist": "webpack; BUILD_ENV=dist webpack",
     "release": "mkdir -p releases; cp -f dist/react-infinite-tree.css releases/react-infinite-tree-${npm_package_version}.css; cp -f dist/react-infinite-tree.js releases/react-infinite-tree-${npm_package_version}.js; cp -f dist/react-infinite-tree.min.js releases/react-infinite-tree-${npm_package_version}.min.js",
     "lint": "npm run eslint && npm run stylint",
@@ -15,7 +15,7 @@
     "eslint:fix": "eslint --fix ./src",
     "stylint": "stylint src/*.styl",
     "stylus": "stylus -u nib < src/index.styl > dist/react-infinite-tree.css",
-    "coveralls": "./babel-tap --coverage --coverage-report=text-lcov test/*.js | node_modules/.bin/coveralls",
+    "coveralls": "tap test/*.js --coverage --coverage-report=text-lcov --nyc-arg=--require --nyc-arg=babel-register --nyc-arg=--require --nyc-arg=babel-polyfill | coveralls",
     "dev": "cd examples; webpack-dev-server --hot --inline --host 0.0.0.0 --port 8000 --content-base ../docs"
   },
   "repository": {
@@ -54,7 +54,7 @@
     "babel-preset-react": "~6.24.1",
     "babel-preset-stage-0": "~6.24.1",
     "classnames": "~2.2.5",
-    "coveralls": "~2.13.1",
+    "coveralls": "tap test/*.js --coverage --coverage-report=text-lcov --nyc-arg=--require --nyc-arg=babel-register --nyc-arg=--require --nyc-arg=babel-polyfill | coveralls",
     "css-loader": "~0.28.1",
     "eslint": "~3.19.0",
     "eslint-config-trendmicro": "~0.5.1",

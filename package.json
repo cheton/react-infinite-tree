@@ -1,6 +1,6 @@
 {
   "name": "react-infinite-tree",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "The infinite-tree library for React.",
   "main": "lib/index.js",
   "scripts": {
@@ -40,8 +40,8 @@
     "tree"
   ],
   "peerDependencies": {
-    "react": "^0.14.0 || ^15.0.0",
-    "react-dom": "^0.14.0 || ^15.0.0",
+    "react": "^0.14.0 || >=15.0.0",
+    "react-dom": "^0.14.0 || >=15.0.0",
     "infinite-tree": ">=1.11.0"
   },
   "dependencies": {},
@@ -64,8 +64,8 @@
     "eslint-plugin-react": "~6.10.3",
     "infinite-tree": "~1.11.0",
     "nib": "~1.1.2",
-    "react": "^0.14.0 || ^15.0.0",
-    "react-dom": "^0.14.0 || ^15.0.0",
+    "react": "^0.14.0 || >=15.0.0",
+    "react-dom": "^0.14.0 || >=15.0.0",
     "style-loader": "~0.17.0",
     "stylint": "~1.5.9",
     "stylus": "~0.54.5",

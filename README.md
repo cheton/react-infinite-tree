@@ -27,6 +27,7 @@ npm install --save react-infinite-tree
 
 ## Example
 
+#### Tree.jsx
 ```jsx
 <InfiniteTree
     ref={node => {
@@ -135,6 +136,66 @@ npm install --save react-infinite-tree
     );
 }}
 </InfiniteTree>
+```
+
+#### render.jsx
+```jsx
+import React from 'react';
+import styled from 'styled-components';
+
+const rowHeight = 30;
+
+export const TreeNode = styled.div`
+    cursor: default;
+    position: relative;
+    line-height: ${rowHeight - 2}px;
+    background: ${props => props.selected ? '#deecfd' : 'transparent'};
+    border: ${props => props.selected ? '1px solid #06c' : '1px solid transparent'};
+    &:hover {
+        background: #f2fdff;
+    }
+    padding-left: ${props => props.depth * 18}px;
+`;
+
+export const Toggler = styled(({ state, ...props }) => (
+    <a {...props}>
+        {(state === 'expanded') &&
+        <i className="fa fa-fw fa-chevron-right" />
+        }
+        {(state === 'collapsed') &&
+        <i className="fa fa-fw fa-chevron-down" />
+        }
+    </a>
+))`
+    color: #333;
+    display: inine-block;
+    text-align: center;
+    margin-right: 2px;
+`;
+
+export const Icon = ({ state, ...props }) => (
+    <span {...props}>
+        {(state === 'folder-open') &&
+        <i className="fa fa-fw fa-folder-open-o" />
+        }
+        {(state === 'folder') &&
+        <i className="fa fa-fw fa-folder-o" />
+        }
+        {(state === 'file') &&
+        <i className="fa fa-fw fa-file-o" />
+        }
+    </span>
+);
+
+export const PointerCursor = styled.div`
+    display: inline-block;
+    cursor: pointer;
+`;
+
+export const Text = styled.span`
+    margin-left: 0 2px;
+    user-select: none;
+`;
 ```
 
 ## API Documentation

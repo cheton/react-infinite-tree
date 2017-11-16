@@ -24,7 +24,11 @@ module.exports = {
             },
             {
                 test: /\.styl$/,
-                loader: 'style-loader!css-loader!stylus-loader'
+                use: [
+                    'style-loader',
+                    'css-loader?camelCase&modules&importLoaders=1&localIdentName=[local]---[hash:base64:5]',
+                    'stylus-loader'
+                ]
             },
             {
                 test: /\.css$/,
@@ -75,6 +79,7 @@ module.exports = {
     },
     // https://webpack.github.io/docs/webpack-dev-server.html#additional-configuration-options
     devServer: {
+        disableHostCheck: true,
         noInfo: false,
         lazy: false,
         // https://webpack.github.io/docs/node.js-api.html#compiler

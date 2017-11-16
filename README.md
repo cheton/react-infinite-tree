@@ -21,145 +21,120 @@ Demo: http://cheton.github.io/react-infinite-tree
  Yes | Yes | Yes| 9+ | Yes | Yes | 
 
 ## Installation
-```bash
-npm install --save react react-dom infinite-tree
+```sh
 npm install --save react-infinite-tree
 ```
 
 ## Example
+
 ```jsx
-import React from 'react';
-import classNames from 'classnames';
-import InfiniteTree from 'react-infinite-tree';
-import 'react-infinite-tree/dist/react-infinite-tree.css';
+<InfiniteTree
+    ref={node => {
+        this.tree = node ? node.tree : null;
+    }}
+    style={{
+        border: '1px solid #ccc'
+    }}
+    data={this.data}
+    width="100%"
+    height={400}
+    rowHeight={30}
+    autoOpen={true}
+    loadNodes={(parentNode, done) => {
+        const suffix = parentNode.id.replace(/(\w)+/, '');
+        const nodes = [
+            {
+                id: 'node1' + suffix,
+                name: 'Node 1'
+            },
+            {
+                id: 'node2' + suffix,
+                name: 'Node 2'
+            }
+        ];
+        setTimeout(() => {
+            done(null, nodes);
+        }, 1000);
+    }}
+    selectable={true} // Defaults to true
+    shouldSelectNode={(node) => { // Defaults to null
+        if (!node || (node === this.tree.getSelectedNode())) {
+            return false; // Prevent from deselecting the current node
+        }
+        return true;
+    }}
+    onKeyDown={(event) => {
+        const target = event.target || event.srcElement; // IE8
+        console.log('onKeyDown', target);
+        event.preventDefault();
 
-const data = {
-    id: 'fruit',
-    name: 'Fruit',
-    children: [{
-        id: 'apple',
-        name: 'Apple'
-    }, {
-        id: 'banana',
-        name: 'Banana',
-        children: [{
-            id: 'cherry',
-            name: 'Cherry',
-            loadOnDemand: true
-        }]
-    }]
-};
+        const node = this.tree.getSelectedNode();
+        const nodeIndex = this.tree.getSelectedIndex();
 
-class App extends React.Component {
-    tree = null;
+        if (event.keyCode === 37) { // Left
+            this.tree.closeNode(node);
+        } else if (event.keyCode === 38) { // Up
+            const prevNode = this.tree.nodes[nodeIndex - 1] || node;
+            this.tree.selectNode(prevNode);
+        } else if (event.keyCode === 39) { // Right
+            this.tree.openNode(node);
+        } else if (event.keyCode === 40) { // Down
+            const nextNode = this.tree.nodes[nodeIndex + 1] || node;
+            this.tree.selectNode(nextNode);
+        }
+    }}
+>
+{({ node, tree }) => {
+    const { id, name, loadOnDemand = false, children, state, props = {} } = node;
+    const { depth, open, path, total, loading = false, selected = false } = state;
+    const childrenLength = Object.keys(children).length;
+    const more = node.hasChildren();
 
-    componentDidMount() {
-        this.tree.loadData(data);
-
-        // Select the first node
-        this.tree.selectNode(this.tree.getChildNodes()[0]);
+    let togglerState = '';
+    if ((!more && loadOnDemand) || (more && !open)) {
+        togglerState = 'collapsed';
     }
-    render() {
-        return (
-            <div>
-                <InfiniteTree
-                    ref={(c) => this.tree = c.tree}
-                    autoOpen={true}
-                    loadNodes={(parentNode, done) => {
-                        const suffix = parentNode.id.replace(/(\w)+/, '');
-                        const nodes = [
-                            {
-                                id: 'node1' + suffix,
-                                name: 'Node 1'
-                            },
-                            {
-                                id: 'node2' + suffix,
-                                name: 'Node 2'
-                            }
-                        ];
-                        setTimeout(() => {
-                            done(null, nodes);
-                        }, 1000);
-                    }}
-                    rowRenderer={(node, treeOptions) => {
-                        const { id, name, loadOnDemand = false, children, state, props = {} } = node;
-                        const droppable = treeOptions.droppable;
-                        const { depth, open, path, total, selected = false } = state;
-                        const more = node.hasChildren();
-
-                        return (
-                            <div
-                                className={classNames(
-                                    'infinite-tree-item',
-                                    { 'infinite-tree-selected': selected }
-                                )}
-                                data-id={id}
-                                droppable={droppable}
-                            >
-                                <div
-                                    className="infinite-tree-node"
-                                    style={{ marginLeft: depth * 18 }}
-                                >
-                                    {!more && loadOnDemand &&
-                                        <a className={classNames(treeOptions.togglerClass, 'infinite-tree-closed')}>►</a>
-                                    }
-                                    {more && open &&
-                                        <a className={classNames(treeOptions.togglerClass)}>▼</a>
-                                    }
-                                    {more && !open &&
-                                        <a className={classNames(treeOptions.togglerClass, 'infinite-tree-closed')}>►</a>
-                                    }
-                                    <span className="infinite-tree-title">{name}</span>
-                                </div>
-                            </div>
-                        );
-                    }}
-                    selectable={true}
-                    shouldSelectNode={(node) => {
-                        if (!node || (node === this.tree.getSelectedNode())) {
-                            return false; // Prevent from deselecting the current node
-                        }
-                        return true;
-                    }}
-                    onClick={(event) => {
-                        // click event
-                        const target = event.target || event.srcElement; // IE8
-                        console.log('click:', target);
-                    }}
-                    onDoubleClick={(event) => {
-                        // dblclick event
-                    }}
-                    onKeyDown={(event) => {
-                        // keydown event
-                    }}
-                    onKeyUp={(event) => {
-                        // keyup event
-                    }}
-                    onCloseNode={(node) => {
-                    }}
-                    onOpenNode={(node) => {
-                    }}
-                    onSelectNode={(node) => {
-                    }}
-                    onWillCloseNode={(node) => {
-                    }}
-                    onWillOpenNode={(node) => {
-                    }}
-                    onWillSelectNode={(node) => {
-                    }}
-                    onClusterWillChange={() => {
-                    }}
-                    onClusterDidChange={() => {
-                    }}
-                    onContentWillUpdate={() => {
-                    }}
-                    onContentDidUpdate={() => {
-                    }}
-                />
-            </div>
-        );
+    if (more && open) {
+        togglerState = 'expanded';
     }
-}
+
+    let iconState = '';
+    if (more && open) {
+        iconState = 'folder-open';
+    }
+    if (more && !open) {
+        iconState = 'folder';
+    }
+    if (!more) {
+        iconState = 'file';
+    }
+
+    return (
+        <TreeNode
+            selected={selected}
+            depth={depth}
+            onClick={event => {
+                tree.selectNode(node);
+            }}
+        >
+            <Toggler
+                state={togglerState}
+                onClick={() => {
+                    if (togglerState === 'collapsed') {
+                        tree.openNode(node);
+                    } else if (togglerState === 'expanded') {
+                        tree.closeNode(node);
+                    }
+                }}
+            />
+            <PointerCursor>
+                <Icon state={iconState} />
+                <Text>{name}</Text>
+            </PointerCursor>
+        </TreeNode>
+    );
+}}
+</InfiniteTree>
 ```
 
 ## API Documentation
@@ -173,6 +148,4 @@ Check out API documentation at [infinite-tree](https://github.com/cheton/infinit
 
 ## License
 
-Copyright (c) 2016 Cheton Wu
-
-Licensed under the [MIT License](LICENSE).
+MIT

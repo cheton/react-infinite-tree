@@ -1,17 +1,63 @@
+import Dropdown, { MenuItem } from '@trendmicro/react-dropdown';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import InfiniteTree from '../src/InfiniteTree';
-import render from './render';
-import '../src/index.styl';
+import InfiniteTree from '../src';
+import TreeNode from './components/TreeNode';
+import Toggler from './components/Toggler';
+import Icon from './components/Icon';
+import Clickable from './components/Clickable';
+import Text from './components/Text';
+import Label from './components/Label';
+import Loading from './components/Loading';
+import { generate } from './tree-generator';
 
-const generateData = () => {
-    const data = [];
-    const source = '{"id":"<root>","name":"<root>","props":{"droppable":true},"children":[{"id":"alpha","name":"Alpha","props":{"droppable":true}},{"id":"bravo","name":"Bravo","props":{"droppable":true},"children":[{"id":"charlie","name":"Charlie","props":{"droppable":true},"children":[{"id":"delta","name":"Delta","props":{"droppable":true},"children":[{"id":"echo","name":"Echo","props":{"droppable":true}},{"id":"foxtrot","name":"Foxtrot","props":{"droppable":true}}]},{"id":"golf","name":"Golf","props":{"droppable":true}}]},{"id":"hotel","name":"Hotel","props":{"droppable":true},"children":[{"id":"india","name":"India","props":{"droppable":true},"children":[{"id":"juliet","name":"Juliet","props":{"droppable":true}}]}]},{"id":"kilo","name":"(Load On Demand) Kilo","loadOnDemand":true,"props":{"droppable":true}}]}]}';
-    for (let i = 0; i < 1000; ++i) {
-        data.push(JSON.parse(source.replace(/"(id|name)":"([^"]*)"/g, '"$1": "$2.' + i + '"')));
-    }
-    return data;
-};
+const renderTreeNode = ({ node, tree, toggleState }) => (
+    <TreeNode
+        selected={node.state.selected}
+        depth={node.state.depth}
+        onClick={event => {
+            tree.selectNode(node);
+        }}
+    >
+        <Toggler
+            state={toggleState}
+            onClick={() => {
+                if (toggleState === 'closed') {
+                    tree.openNode(node);
+                } else if (toggleState === 'opened') {
+                    tree.closeNode(node);
+                }
+            }}
+        />
+        <Clickable>
+            <Icon state={toggleState} />
+            <Text>{node.name}</Text>
+        </Clickable>
+        {(node.loadOnDemand && node.children.length === 0 && !node.state.loading) &&
+            <i className="fa fa-fw fa-ellipsis-v" />
+        }
+        {node.state.loading && <Loading />}
+        <Label style={{ position: 'absolute', right: 5, top: 6 }}>
+            {node.children.length}
+        </Label>
+        <Dropdown
+            style={{ position: 'absolute', right: 20, top: 4 }}
+            pullRight
+        >
+            <Dropdown.Toggle
+                noCaret
+                btnSize="xs"
+                btnStyle="link"
+                style={{ padding: 0 }}
+            >
+                <i className="dropdown fa fa-fw fa-cog" />
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+                <MenuItem>{node.name}</MenuItem>
+            </Dropdown.Menu>
+        </Dropdown>
+    </TreeNode>
+);
 
 class Tree extends PureComponent {
     static propTypes = {
@@ -19,11 +65,9 @@ class Tree extends PureComponent {
     };
 
     tree = null;
-    data = generateData();
+    data = generate(1000);
 
     componentDidMount() {
-        //this.tree.loadData(data);
-
         // Select the first node
         this.tree.selectNode(this.tree.getChildNodes()[0]);
     }
@@ -36,11 +80,26 @@ class Tree extends PureComponent {
                 style={{
                     border: '1px solid #ccc'
                 }}
+                autoOpen
+                selectable
+                tabIndex={0}
                 data={this.data}
                 width="100%"
                 height={400}
                 rowHeight={30}
-                autoOpen={true}
+                rowRenderer={({ node, tree }) => {
+                    const hasChildren = node.hasChildren();
+
+                    let toggleState = '';
+                    if ((!hasChildren && node.loadOnDemand) || (hasChildren && !node.state.open)) {
+                        toggleState = 'closed';
+                    }
+                    if (hasChildren && node.state.open) {
+                        toggleState = 'opened';
+                    }
+
+                    return renderTreeNode({ node, tree, toggleState });
+                }}
                 loadNodes={(parentNode, done) => {
                     const suffix = parentNode.id.replace(/(\w)+/, '');
                     const nodes = [
@@ -57,16 +116,18 @@ class Tree extends PureComponent {
                         done(null, nodes);
                     }, 1000);
                 }}
-                selectable={true} // Defaults to true
                 shouldSelectNode={(node) => { // Defaults to null
                     if (!node || (node === this.tree.getSelectedNode())) {
                         return false; // Prevent from deselecting the current node
                     }
                     return true;
                 }}
+                onKeyUp={(event) => {
+                    console.log('onKeyUp', event.target);
+                }}
                 onKeyDown={(event) => {
-                    const target = event.target || event.srcElement; // IE8
-                    console.log('onKeyDown', target);
+                    console.log('onKeyDown', event.target);
+
                     event.preventDefault();
 
                     const node = this.tree.getSelectedNode();
@@ -88,16 +149,32 @@ class Tree extends PureComponent {
                     console.log('onContentWillUpdate');
                 }}
                 onContentDidUpdate={() => {
+                    console.log('onContentDidUpdate');
                     this.props.onUpdate(this.tree.getSelectedNode());
                 }}
+                onOpenNode={(node) => {
+                    console.log('onOpenNode:', node);
+                }}
+                onCloseNode={(node) => {
+                    console.log('onCloseNode:', node);
+                }}
                 onSelectNode={(node) => {
+                    console.log('onSelectNode:', node);
                     this.props.onUpdate(node);
                 }}
-            >
-            {({ node, tree }) => {
-                return render({ node, tree });
-            }}
-            </InfiniteTree>
+                onWillOpenNode={(node) => {
+                    console.log('onWillOpenNode:', node);
+                }}
+                onWillCloseNode={(node) => {
+                    console.log('onWillCloseNode:', node);
+                }}
+                onWillSelectNode={(node) => {
+                    console.log('onWillSelectNode:', node);
+                }}
+                onScroll={(scrollOffset, event) => {
+                    console.log('## onScroll', scrollOffset, event);
+                }}
+            />
         );
     }
 }

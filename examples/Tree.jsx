@@ -145,6 +145,9 @@ class Tree extends PureComponent {
                         this.tree.selectNode(nextNode);
                     }
                 }}
+                onScroll={(scrollOffset, event) => {
+                    console.log('onScroll', scrollOffset, event);
+                }}
                 onContentWillUpdate={() => {
                     console.log('onContentWillUpdate');
                 }}
@@ -170,9 +173,6 @@ class Tree extends PureComponent {
                 }}
                 onWillSelectNode={(node) => {
                     console.log('onWillSelectNode:', node);
-                }}
-                onScroll={(scrollOffset, event) => {
-                    console.log('## onScroll', scrollOffset, event);
                 }}
             />
         );

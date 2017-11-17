@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
-import Tree from './tree';
-import Preview from './preview';
+import Tree from './Tree';
+import Preview from './Preview';
 
 class App extends PureComponent {
     state = {

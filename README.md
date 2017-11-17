@@ -27,12 +27,16 @@ npm install --save react-infinite-tree
 
 ## Example
 
+### Components
+
+https://github.com/cheton/react-infinite-tree/tree/master/examples/components
+
 ### Tree
 
 ```jsx
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import InfiniteTree from '../src';
+import InfiniteTree from 'react-infinite-tree';
 import TreeNode from './components/TreeNode';
 import Toggler from './components/Toggler';
 import Icon from './components/Icon';
@@ -167,10 +171,6 @@ class Tree extends PureComponent {
 
 export default Tree;
 ```
-
-### Components
-
-https://github.com/cheton/react-infinite-tree/tree/master/examples/components
 
 # API
 

@@ -25,152 +25,146 @@ Demo: http://cheton.github.io/react-infinite-tree
 npm install --save react-infinite-tree
 ```
 
-## Example
+## Usage
+
+### Tree Structure
+
+A tree structure can either be a node object or an array of node objects, and each node should have a unique `id`. Note that `id`, `state`, `children`, and `parent` are reserved keys for defining a node. See below for a basic tree structure:
+
+```js
+{
+    id: 'fruit',
+    name: 'Fruit',
+    children: [{
+        id: 'apple',
+        name: 'Apple'
+    }, {
+        id: 'banana',
+        name: 'Banana',
+        children: [{
+            id: 'cherry',
+            name: 'Cherry',
+            loadOnDemand: true
+        }]
+    }]
+}
+```
+
+### Rendering Tree Nodes
+
+You can use `rowRenderer` or pass a child function for rendering tree nodes. The child function will be supplied with the following properties:
+
+* `tree` - https://github.com/cheton/infinite-tree/wiki/Functions:-Tree
+* `node` - https://github.com/cheton/infinite-tree/wiki/Functions:-Node
+
+
+```jsx
+import React from 'react';
+import InfiniteTree from 'react-infinite-tree';
+
+export default (props) => (
+    <InfiniteTree
+        width="100%"
+        height={400}
+        rowHeight={30}
+        data={props.data}
+    >
+    {({ tree, node }) => {
+        // Determine the toggle state
+        let toggleState = '';
+        const hasChildren = node.hasChildren();
+        if ((!hasChildren && node.loadOnDemand) || (hasChildren && !node.state.open)) {
+            toggleState = 'closed';
+        }
+        if (hasChildren && node.state.open) {
+            toggleState = 'opened';
+        }
+        
+        return (
+            <TreeNode
+                selected={node.state.selected}
+                depth={node.state.depth}
+                onClick={event => {
+                    tree.selectNode(node);
+                }}
+            >
+                <Toggler
+                    state={toggleState}
+                    onClick={() => {
+                        if (toggleState === 'closed') {
+                            tree.openNode(node);
+                        } else if (toggleState === 'opened') {
+                            tree.closeNode(node);
+                        }
+                    }}
+                />
+                <span>{node.name}</span>
+            </TreeNode>
+        );
+    }}
+    </InfiniteTree>
+);
+```
 
 ### Components
 
-https://github.com/cheton/react-infinite-tree/tree/master/examples/components
-
-### Tree
+#### TreeNode Component
 
 ```jsx
-import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
-import InfiniteTree from 'react-infinite-tree';
-import TreeNode from './components/TreeNode';
-import Toggler from './components/Toggler';
-import Icon from './components/Icon';
-import Clickable from './components/Clickable';
-import Text from './components/Text';
-import Label from './components/Label';
-import Loading from './components/Loading';
-import { generate } from './tree-generator';
+import React from 'react';
+import styled from 'styled-components';
 
-const renderTreeNode = ({ node, tree, toggleState }) => (
-    <TreeNode
-        selected={node.state.selected}
-        depth={node.state.depth}
-        onClick={event => {
-            tree.selectNode(node);
-        }}
-    >
-        <Toggler
-            state={toggleState}
-            onClick={() => {
-                if (toggleState === 'closed') {
-                    tree.openNode(node);
-                } else if (toggleState === 'opened') {
-                    tree.closeNode(node);
-                }
-            }}
-        />
-        <Clickable>
-            <Icon state={toggleState} />
-            <Text>{node.name}</Text>
-        </Clickable>
-        {(node.loadOnDemand && node.children.length === 0 && !node.state.loading) &&
-            <i className="fa fa-fw fa-ellipsis-v" />
+const defaultRowHeight = 30;
+
+const TreeNode = styled.div`
+    cursor: default;
+    position: relative;
+    line-height: ${({ rowHeight = defaultRowHeight }) => rowHeight - 2}px;
+    background: ${props => props.selected ? '#deecfd' : 'transparent'};
+    border: ${props => props.selected ? '1px solid #06c' : '1px solid transparent'};
+    padding-left: ${props => props.depth * 18}px;
+    .dropdown {
+        visibility: hidden;
+    }
+    &:hover {
+        background: #f2fdff;
+        .dropdown {
+            visibility: inherit;
         }
-        {node.state.loading && <Loading />}
-        <Label style={{ position: 'absolute', right: 5, top: 6 }}>
-            {node.children.length}
-        </Label>
-    </TreeNode>
-);
-
-class Tree extends PureComponent {
-    tree = null;
-    data = generate(1000);
-
-    componentDidMount() {
-        // Select the first node
-        this.tree.selectNode(this.tree.getChildNodes()[0]);
     }
-    render() {
-        return (
-            <InfiniteTree
-                ref={node => {
-                    this.tree = node ? node.tree : null;
-                }}
-                style={{
-                    border: '1px solid #ccc'
-                }}
-                autoOpen
-                selectable
-                tabIndex={0}
-                data={this.data}
-                width="100%"
-                height={400}
-                rowHeight={30}
-                rowRenderer={({ node, tree }) => {
-                    const hasChildren = node.hasChildren();
-                    let toggleState = '';
-                    if ((!hasChildren && node.loadOnDemand) || (hasChildren && !node.state.open)) {
-                        toggleState = 'closed';
-                    }
-                    if (hasChildren && node.state.open) {
-                        toggleState = 'opened';
-                    }
-                    return renderTreeNode({ node, tree, toggleState });
-                }}
-                loadNodes={(parentNode, done) => {
-                    const suffix = parentNode.id.replace(/(\w)+/, '');
-                    const nodes = [
-                        {
-                            id: 'node1' + suffix,
-                            name: 'Node 1'
-                        },
-                        {
-                            id: 'node2' + suffix,
-                            name: 'Node 2'
-                        }
-                    ];
-                    setTimeout(() => {
-                        done(null, nodes);
-                    }, 1000);
-                }}
-                shouldSelectNode={(node) => { // Defaults to null
-                    if (!node || (node === this.tree.getSelectedNode())) {
-                        return false; // Prevent from deselecting the current node
-                    }
-                    return true;
-                }}
-                onKeyUp={(event) => {
-                    console.log('onKeyUp', event.target);
-                }}
-                onKeyDown={(event) => {
-                    console.log('onKeyDown', event.target);
-                    event.preventDefault();
-                    const node = this.tree.getSelectedNode();
-                    const nodeIndex = this.tree.getSelectedIndex();
-                    if (event.keyCode === 37) { // Left
-                        this.tree.closeNode(node);
-                    } else if (event.keyCode === 38) { // Up
-                        const prevNode = this.tree.nodes[nodeIndex - 1] || node;
-                        this.tree.selectNode(prevNode);
-                    } else if (event.keyCode === 39) { // Right
-                        this.tree.openNode(node);
-                    } else if (event.keyCode === 40) { // Down
-                        const nextNode = this.tree.nodes[nodeIndex + 1] || node;
-                        this.tree.selectNode(nextNode);
-                    }
-                }}
-                onScroll={(scrollOffset, event) => {}}
-                onContentWillUpdate={() => {}}
-                onContentDidUpdate={() => {}}
-                onOpenNode={(node) => {}}
-                onCloseNode={(node) => {}}
-                onSelectNode={(node) => {}}
-                onWillOpenNode={(node) => {}}
-                onWillCloseNode={(node) => {}}
-                onWillSelectNode={(node) => {}}
-            />
-        );
-    }
-}
+`;
 
-export default Tree;
+export default TreeNode;
 ```
+
+#### Toggler Component
+
+```jsx
+import React from 'react';
+import styled from 'styled-components';
+
+const Toggler = styled(({ state, ...props }) => (
+    <a {...props}>
+        {(state === 'closed') &&
+        <i className="fa fa-fw fa-chevron-right" />
+        }
+        {(state === 'opened') &&
+        <i className="fa fa-fw fa-chevron-down" />
+        }
+    </a>
+))`
+    color: #333;
+    display: inline-block;
+    text-align: center;
+    margin-right: 2px;
+`;
+
+export default Toggler;
+```
+
+## Example
+
+See https://github.com/cheton/react-infinite-tree/blob/master/examples/Tree.jsx for a complete example.
 
 # API
 

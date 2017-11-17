@@ -552,14 +552,6 @@ var _class = function (_Component) {
         return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = _class.__proto__ || Object.getPrototypeOf(_class)).call.apply(_ref, [this].concat(args))), _this), _this.tree = null, _this.state = {
             nodes: []
         }, _this.eventHandlers = {
-            /*
-            onClick: null,
-            onDoubleClick: null,
-            onKeyDown: null,
-            onKeyUp: null,
-            */
-            onClusterWillChange: null,
-            onClusterDidChange: null,
             onContentWillUpdate: null,
             onContentDidUpdate: null,
             onOpenNode: null,
@@ -592,6 +584,41 @@ var _class = function (_Component) {
 
             this.tree = new _infiniteTree2.default(options);
 
+            // Sets the current scroll position to this node.
+            // @param {Node} node The Node object.
+            // @return {boolean} Returns true on success, false otherwise.
+            this.tree.scrollToNode = function (node) {
+                if (!_this2.tree || !_this2.virtualList) {
+                    return false;
+                }
+
+                var nodeIndex = _this2.tree.nodes.indexOf(node);
+                if (nodeIndex < 0) {
+                    return false;
+                }
+
+                var offset = _this2.virtualList.getOffsetForIndex(nodeIndex);
+                _this2.virtualList.scrollTo(offset);
+
+                return true;
+            };
+
+            // Gets (or sets) the current vertical position of the scroll bar.
+            // @param {number} [value] If the value is specified, indicates the new position to set the scroll bar to.
+            // @return {number} Returns the vertical scroll position.
+            this.tree.scrollTop = function (value) {
+                if (!_this2.tree || !_this2.virtualList) {
+                    return;
+                }
+
+                if (value !== undefined) {
+                    _this2.virtualList.scrollTo(Number(value));
+                }
+
+                return _this2.virtualList.getNodeOffset();
+            };
+
+            // Updates the tree.
             this.tree.update = function () {
                 _this2.tree.emit('contentWillUpdate');
                 _this2.setState(function (state) {
@@ -637,30 +664,55 @@ var _class = function (_Component) {
             var _this4 = this;
 
             var _props2 = this.props,
+                autoOpen = _props2.autoOpen,
+                selectable = _props2.selectable,
+                tabIndex = _props2.tabIndex,
+                data = _props2.data,
                 width = _props2.width,
                 height = _props2.height,
                 rowHeight = _props2.rowHeight,
-                onKeyUp = _props2.onKeyUp,
-                onKeyDown = _props2.onKeyDown,
-                tabIndex = _props2.tabIndex,
-                className = _props2.className,
-                style = _props2.style;
+                rowRenderer = _props2.rowRenderer,
+                loadNodes = _props2.loadNodes,
+                shouldSelectNode = _props2.shouldSelectNode,
+                scrollOffset = _props2.scrollOffset,
+                scrollToIndex = _props2.scrollToIndex,
+                onScroll = _props2.onScroll,
+                onContentWillUpdate = _props2.onContentWillUpdate,
+                onContentDidUpdate = _props2.onContentDidUpdate,
+                onOpenNode = _props2.onOpenNode,
+                onCloseNode = _props2.onCloseNode,
+                onSelectNode = _props2.onSelectNode,
+                onWillOpenNode = _props2.onWillOpenNode,
+                onWillCloseNode = _props2.onWillCloseNode,
+                onWillSelectNode = _props2.onWillSelectNode,
+                style = _props2.style,
+                props = _objectWithoutProperties(_props2, ['autoOpen', 'selectable', 'tabIndex', 'data', 'width', 'height', 'rowHeight', 'rowRenderer', 'loadNodes', 'shouldSelectNode', 'scrollOffset', 'scrollToIndex', 'onScroll', 'onContentWillUpdate', 'onContentDidUpdate', 'onOpenNode', 'onCloseNode', 'onSelectNode', 'onWillOpenNode', 'onWillCloseNode', 'onWillSelectNode', 'style']);
 
-            var render = typeof this.props.children === 'function' ? this.props.children : this.props.rowRenderer;
+            var render = typeof children === 'function' ? children : rowRenderer;
+
             var count = this.tree ? this.tree.nodes.length : 0;
+
+            // VirtualList
+            var virtualListProps = {};
+            if (scrollOffset !== undefined && count > 0) {
+                virtualListProps.scrollOffset = scrollOffset;
+            }
+            if (scrollToIndex !== undefined && scrollToIndex >= 0 && scrollToIndex < count) {
+                virtualListProps.scrollToIndex = scrollToIndex;
+            }
+            if (typeof onScroll !== 'function') {
+                virtualListProps.onScroll = onScroll;
+            }
 
             return _react2.default.createElement(
                 'div',
-                {
-                    className: className,
+                _extends({}, props, {
                     style: _extends({
                         outline: 'none'
                     }, style),
-                    onKeyDown: onKeyDown,
-                    onKeyUp: onKeyUp,
                     tabIndex: tabIndex
-                },
-                _react2.default.createElement(_reactTinyVirtualList2.default, {
+                }),
+                _react2.default.createElement(_reactTinyVirtualList2.default, _extends({
                     ref: function ref(node) {
                         _this4.virtualList = node;
                     },
@@ -686,7 +738,7 @@ var _class = function (_Component) {
                             row
                         );
                     }
-                })
+                }, virtualListProps))
             );
         }
     }]);
@@ -694,14 +746,77 @@ var _class = function (_Component) {
     return _class;
 }(_react.Component);
 
+_class.displayName = 'InfiniteTree';
 _class.propTypes = {
+    // Whether to open all nodes when tree is loaded.
+    autoOpen: _propTypes2.default.bool,
+
+    // Whether or not a node is selectable in the tree.
+    selectable: _propTypes2.default.bool,
+
+    // Specifies the tab order to make tree focusable.
+    tabIndex: _propTypes2.default.number,
+
+    // Tree data structure, or a collection of tree data structures.
+    data: _propTypes2.default.oneOfType([_propTypes2.default.array, _propTypes2.default.object]),
+
+    // Width of the tree.
     width: _propTypes2.default.oneOfType([_propTypes2.default.string, _propTypes2.default.number]).isRequired,
+
+    // Height of the tree.
     height: _propTypes2.default.oneOfType([_propTypes2.default.string, _propTypes2.default.number]).isRequired,
-    rowHeight: _propTypes2.default.oneOfType([_propTypes2.default.number, _propTypes2.default.func]).isRequired,
-    rowRenderer: _propTypes2.default.func.isRequired
+
+    // Either a fixed height, an array containing the heights of all the rows, or a function that returns the height of a row given its index: `(index: number): number`
+    rowHeight: _propTypes2.default.oneOfType([_propTypes2.default.number, _propTypes2.default.array, _propTypes2.default.func]).isRequired,
+
+    // A row renderer for rendering a tree node.
+    rowRenderer: _propTypes2.default.func,
+
+    // Loads nodes on demand.
+    loadNodes: _propTypes2.default.func,
+
+    // Provides a function to determine if a node can be selected or deselected. The function must return `true` or `false`. This function will not take effect if `selectable` is not `true`.
+    shouldSelectNode: _propTypes2.default.func,
+
+    // Controls the scroll offset.
+    scrollOffset: _propTypes2.default.number,
+
+    // Node index to scroll to.
+    scrollToIndex: _propTypes2.default.number,
+
+    // Callback invoked whenever the scroll offset changes.
+    onScroll: _propTypes2.default.func,
+
+    // Callback invoked before updating the tree.
+    onContentWillUpdate: _propTypes2.default.func,
+
+    // Callback invoked when the tree is updated.
+    onContentDidUpdate: _propTypes2.default.func,
+
+    // Callback invoked when a node is opened.
+    onOpenNode: _propTypes2.default.func,
+
+    // Callback invoked when a node is closed.
+    onCloseNode: _propTypes2.default.func,
+
+    // Callback invoked when a node is selected or deselected.
+    onSelectNode: _propTypes2.default.func,
+
+    // Callback invoked before opening a node.
+    onWillOpenNode: _propTypes2.default.func,
+
+    // Callback invoked before closing a node.
+    onWillCloseNode: _propTypes2.default.func,
+
+    // Callback invoked before selecting or deselecting a node.
+    onWillSelectNode: _propTypes2.default.func
 };
 _class.defaultProps = {
-    tabIndex: 0
+    autoOpen: false,
+    selectable: true,
+    tabIndex: 0,
+    data: [],
+    width: '100%'
 };
 exports.default = _class;
 ;

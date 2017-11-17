@@ -164,7 +164,13 @@ export default Toggler;
 
 ## Example
 
-See https://github.com/cheton/react-infinite-tree/blob/master/examples/Tree.jsx for a complete example.
+https://github.com/cheton/react-infinite-tree/blob/master/examples/Tree.jsx
+
+#### TreeNode
+https://github.com/cheton/react-infinite-tree/blob/master/examples/components/TreeNode.jsx
+
+#### Toggler
+https://github.com/cheton/react-infinite-tree/blob/master/examples/components/Toggler.jsx
 
 # API
 
@@ -196,11 +202,11 @@ onWillSelectNode | Function(node: Node) | | Callback invoked before selecting or
 
 ### Tree Methods
 
-https://github.com/cheton/react-infinite-tree/wiki/Functions:-Tree
+https://github.com/cheton/infinite-tree/wiki/Functions:-Tree
 
 ### Node Methods
 
-https://github.com/cheton/react-infinite-tree/wiki/Functions:-Node
+https://github.com/cheton/infinite-tree/wiki/Functions:-Node
 
 ## License
 

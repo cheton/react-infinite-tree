@@ -14,7 +14,7 @@ export default class extends Component {
         // Whether to open all nodes when tree is loaded.
         autoOpen: PropTypes.bool,
 
-        // Sets `true` to make tree nodes selectable,
+        // Whether or not a node is selectable in the tree.
         selectable: PropTypes.bool,
 
         // Specifies the tab order to make tree focusable.
@@ -26,13 +26,13 @@ export default class extends Component {
             PropTypes.object
         ]),
 
-        // Width of tree view.
+        // Width of the tree.
         width: PropTypes.oneOfType([
             PropTypes.string,
             PropTypes.number
         ]).isRequired,
 
-        // Height of tree view.
+        // Height of the tree.
         height: PropTypes.oneOfType([
             PropTypes.string,
             PropTypes.number
@@ -54,20 +54,41 @@ export default class extends Component {
         // Provides a function to determine if a node can be selected or deselected. The function must return `true` or `false`. This function will not take effect if `selectable` is not `true`.
         shouldSelectNode: PropTypes.func,
 
+        // Controls the scroll offset.
         scrollOffset: PropTypes.number,
+        
+        // Node index to scroll to.
         scrollToIndex: PropTypes.number,
+        
+        // Callback invoked whenever the scroll offset changes.
         onScroll: PropTypes.func,
 
+        // Callback invoked before updating the tree.
         onContentWillUpdate: PropTypes.func,
+        
+        // Callback invoked when the tree is updated.
         onContentDidUpdate: PropTypes.func,
+        
+        // Callback invoked when a node is opened.
         onOpenNode: PropTypes.func,
+        
+        // Callback invoked when a node is closed.
         onCloseNode: PropTypes.func,
+        
+        // Callback invoked when a node is selected or deselected.
         onSelectNode: PropTypes.func,
+        
+        // Callback invoked before opening a node.
         onWillOpenNode: PropTypes.func,
+        
+        // Callback invoked before closing a node.
         onWillCloseNode: PropTypes.func,
+        
+        // Callback invoked before selecting or deselecting a node.
         onWillSelectNode: PropTypes.func
     };
     static defaultProps = {
+        autoOpen: false,
         selectable: true,
         tabIndex: 0,
         data: [],

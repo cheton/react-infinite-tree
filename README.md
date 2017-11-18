@@ -10,10 +10,10 @@ Demo: http://cheton.github.io/react-infinite-tree
 
 ## Features
 * High performance infinite scroll with large data set
-* [Customizable renderer](https://github.com/cheton/infinite-tree/wiki/Options#rowrenderer) to render the tree in any form
+* [Customizable renderer](https://github.com/cheton/react-infinite-tree#rendering-tree-nodes) to render the tree in any form
 * [Load nodes on demand](https://github.com/cheton/infinite-tree/wiki/Options#loadnodes)
 * Native HTML5 drag and drop API
-* A rich set of [APIs](https://github.com/cheton/infinite-tree#api-documentation)
+* A rich set of [APIs](https://github.com/cheton/react-infinite-tree#api)
 
 ## Browser Support
 ![Chrome](https://github.com/alrra/browser-logos/raw/master/src/chrome/chrome_48x48.png)<br>Chrome | ![Edge](https://github.com/alrra/browser-logos/raw/master/src/edge/edge_48x48.png)<br>Edge | ![Firefox](https://github.com/alrra/browser-logos/raw/master/src/firefox/firefox_48x48.png)<br>Firefox | ![IE](https://github.com/alrra/browser-logos/raw/master/src/archive/internet-explorer_9-11/internet-explorer_9-11_48x48.png)<br>IE | ![Opera](https://github.com/alrra/browser-logos/raw/master/src/opera/opera_48x48.png)<br>Opera | ![Safari](https://github.com/alrra/browser-logos/raw/master/src/safari/safari_48x48.png)<br>Safari

@@ -99,12 +99,7 @@ class Tree extends PureComponent {
 
                     return renderTreeNode({ node, tree, toggleState });
                 }}
-                rowHeight={({ node, tree }) => {
-                    if (node.state.filtered === false) {
-                        return 0;
-                    }
-                    return 30;
-                }}
+                rowHeight={30}
                 loadNodes={(parentNode, done) => {
                     const suffix = parentNode.id.replace(/(\w)+/, '');
                     const nodes = [

@@ -1,4 +1,4 @@
-/*! react-infinite-tree v1.0.0-alpha.1 | (c) 2017 Cheton Wu <cheton@gmail.com> | MIT | https://github.com/cheton/react-infinite-tree */
+/*! react-infinite-tree v1.0.0-alpha.2 | (c) 2017 Cheton Wu <cheton@gmail.com> | MIT | https://github.com/cheton/react-infinite-tree */
 exports["InfiniteTree"] =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -752,17 +752,19 @@ var _class = function (_Component) {
                     height: height,
                     itemCount: count,
                     itemSize: function itemSize(index) {
-                        var height = rowHeight;
+                        var node = _this4.tree.nodes[index];
+                        if (node && node.state.filtered === false) {
+                            return 0;
+                        }
 
                         if (typeof rowHeight === 'function') {
-                            height = rowHeight({
+                            return rowHeight({
                                 node: _this4.tree.nodes[index],
-                                tree: _this4.tree,
-                                index: index
+                                tree: _this4.tree
                             });
                         }
 
-                        return height;
+                        return rowHeight; // Number or Array
                     },
                     renderItem: function renderItem(_ref2) {
                         var index = _ref2.index,
@@ -775,8 +777,7 @@ var _class = function (_Component) {
                             if (node && node.state.filtered !== false) {
                                 row = render({
                                     node: _this4.tree.nodes[index],
-                                    tree: _this4.tree,
-                                    index: index
+                                    tree: _this4.tree
                                 });
                             }
                         }

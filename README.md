@@ -66,13 +66,7 @@ export default (props) => (
     <InfiniteTree
         width="100%"
         height={400}
-        rowHeight={({ node, tree }) => {
-            // Returns zero height to filter out nodes
-            if (node.state.filtered === false) {
-                return 0;
-            }
-            return 30;
-        }}
+        rowHeight={30}
         data={props.data}
     >
     {({ node, tree }) => {

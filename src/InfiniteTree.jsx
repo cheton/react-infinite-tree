@@ -274,17 +274,19 @@ export default class extends Component {
                     height={height}
                     itemCount={count}
                     itemSize={(index) => {
-                        let height = rowHeight;
+                        const node = this.tree.nodes[index];
+                        if (node && node.state.filtered === false) {
+                            return 0;
+                        }
 
                         if (typeof rowHeight === 'function') {
-                            height = rowHeight({
+                            return rowHeight({
                                 node: this.tree.nodes[index],
-                                tree: this.tree,
-                                index: index
+                                tree: this.tree
                             });
                         }
 
-                        return height;
+                        return rowHeight; // Number or Array
                     }}
                     renderItem={({ index, style }) => {
                         let row = null;
@@ -294,8 +296,7 @@ export default class extends Component {
                             if (node && node.state.filtered !== false) {
                                 row = render({
                                     node: this.tree.nodes[index],
-                                    tree: this.tree,
-                                    index: index
+                                    tree: this.tree
                                 });
                             }
                         }

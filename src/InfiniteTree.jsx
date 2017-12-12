@@ -122,6 +122,26 @@ export default class extends Component {
 
         this.tree = new InfiniteTree(options);
 
+        // Filters nodes.
+        // https://github.com/cheton/infinite-tree/wiki/Functions:-Tree#filterpredicate-options
+        const treeFilter = this.tree.filter.bind(this.tree);
+        this.tree.filter = (...args) => {
+            setTimeout(() => {
+                this.virtualList.recomputeSizes(0);
+            }, 0);
+            return treeFilter(...args);
+        };
+
+        // Unfilter nodes.
+        // https://github.com/cheton/infinite-tree/wiki/Functions:-Tree#unfilter
+        const treeUnfilter = this.tree.unfilter.bind(this.tree);
+        this.tree.unfilter = (...args) => {
+            setTimeout(() => {
+                this.virtualList.recomputeSizes(0);
+            }, 0);
+            return treeUnfilter(...args);
+        };
+
         // Sets the current scroll position to this node.
         // @param {Node} node The Node object.
         // @return {boolean} Returns true on success, false otherwise.
@@ -253,14 +273,31 @@ export default class extends Component {
                     width={width}
                     height={height}
                     itemCount={count}
-                    itemSize={rowHeight}
+                    itemSize={(index) => {
+                        let height = rowHeight;
+
+                        if (typeof rowHeight === 'function') {
+                            height = rowHeight({
+                                node: this.tree.nodes[index],
+                                tree: this.tree,
+                                index: index
+                            });
+                        }
+
+                        return height;
+                    }}
                     renderItem={({ index, style }) => {
                         let row = null;
-                        if (typeof render === 'function' && this.tree && this.tree.nodes.length > 0) {
-                            row = render({
-                                tree: this.tree,
-                                node: this.tree.nodes[index]
-                            });
+
+                        if (typeof render === 'function') {
+                            const node = this.tree.nodes[index];
+                            if (node && node.state.filtered !== false) {
+                                row = render({
+                                    node: this.tree.nodes[index],
+                                    tree: this.tree,
+                                    index: index
+                                });
+                            }
                         }
 
                         return (

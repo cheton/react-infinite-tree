@@ -86,7 +86,6 @@ class Tree extends PureComponent {
                 data={this.data}
                 width="100%"
                 height={400}
-                rowHeight={30}
                 rowRenderer={({ node, tree }) => {
                     const hasChildren = node.hasChildren();
 
@@ -99,6 +98,12 @@ class Tree extends PureComponent {
                     }
 
                     return renderTreeNode({ node, tree, toggleState });
+                }}
+                rowHeight={({ node, tree }) => {
+                    if (node.state.filtered === false) {
+                        return 0;
+                    }
+                    return 30;
                 }}
                 loadNodes={(parentNode, done) => {
                     const suffix = parentNode.id.replace(/(\w)+/, '');

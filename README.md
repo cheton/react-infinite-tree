@@ -66,10 +66,16 @@ export default (props) => (
     <InfiniteTree
         width="100%"
         height={400}
-        rowHeight={30}
+        rowHeight={({ node, tree }) => {
+            // Returns zero height to filter out nodes
+            if (node.state.filtered === false) {
+                return 0;
+            }
+            return 30;
+        }}
         data={props.data}
     >
-    {({ tree, node }) => {
+    {({ node, tree }) => {
         // Determine the toggle state
         let toggleState = '';
         const hasChildren = node.hasChildren();
@@ -184,8 +190,8 @@ tabIndex | Number | 0 | Specifies the tab order to make tree focusable.
 data | Array or Object | [] | Tree data structure, or a collection of tree data structures.
 width \* | Number or String | '100%' | Width of the tree.
 height \* | Number or String | | Height of the tree.
-rowHeight \* | Number, Array, or Function(index: Number): Number | | Either a fixed height, an array containing the heights of all the rows, or a function that returns the height of a row given its index.
-rowRenderer | Function({ node: Node, tree: Tree }): React Node | | A row renderer for rendering a tree node.
+rowHeight \* | Number, Array, or Function({ node: Node, tree: Tree, index: Number }): Number | | Either a fixed height, an array containing the heights of all the rows, or a function that returns the height of the given node.
+rowRenderer | Function({ node: Node, tree: Tree, index: Number }): React Node | | A row renderer for rendering a tree node.
 loadNodes | Function(parentNode: Node, done: Function) | | Loads nodes on demand.
 shouldSelectNode | Function(node: Node): Boolean | | Provides a function to determine if a node can be selected or deselected. The function must return `true` or `false`. This function will not take effect if `selectable` is not `true`.
 scrollOffset | Number | | Controls the scroll offset.

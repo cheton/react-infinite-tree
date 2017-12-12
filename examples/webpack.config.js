@@ -66,12 +66,6 @@ module.exports = {
                 // no need to have a '@import "nib"' in the stylesheet
                 import: ['~nib/lib/nib/index.styl']
             }
-        }),
-        new webpack.optimize.UglifyJsPlugin({
-            compress: {
-                warnings: false
-            },
-            mangle: false
         })
     ],
     resolve: {

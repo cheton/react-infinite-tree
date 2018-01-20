@@ -182,8 +182,8 @@ autoOpen | Boolean | false | Whether to open all nodes when tree is loaded.
 selectable | Boolean | true | Whether or not a node is selectable in the tree.
 tabIndex | Number | 0 | Specifies the tab order to make tree focusable.
 data | Array or Object | [] | Tree data structure, or a collection of tree data structures.
-width \* | Number or String | '100%' | Width of the tree.
-height \* | Number or String | | Height of the tree.
+width | Number or String | '100%' | The tree width. It can be a number or string like "auto" or "100%".
+height | Number | | The tree height. Setting 100% height is currently not supported. See https://github.com/cheton/react-infinite-tree/issues/8.
 rowHeight \* | Number, Array, or Function({ node: Node, tree: Tree, index: Number }): Number | | Either a fixed height, an array containing the heights of all the rows, or a function that returns the height of the given node.
 rowRenderer | Function({ node: Node, tree: Tree, index: Number }): React Node | | A row renderer for rendering a tree node.
 loadNodes | Function(parentNode: Node, done: Function) | | Loads nodes on demand.

@@ -253,7 +253,7 @@ export default class extends Component {
         if ((scrollToIndex !== undefined) && (scrollToIndex >= 0) && (scrollToIndex < count)) {
             virtualListProps.scrollToIndex = scrollToIndex;
         }
-        if (typeof onScroll !== 'function') {
+        if (typeof onScroll === 'function') {
             virtualListProps.onScroll = onScroll;
         }
 

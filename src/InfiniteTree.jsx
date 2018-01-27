@@ -234,6 +234,7 @@ export default class extends Component {
             onWillCloseNode,
             onWillSelectNode,
             style,
+            children,
             ...props
         } = this.props;
 

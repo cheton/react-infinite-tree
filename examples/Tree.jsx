@@ -86,19 +86,6 @@ class Tree extends PureComponent {
                 data={this.data}
                 width="100%"
                 height={400}
-                rowRenderer={({ node, tree }) => {
-                    const hasChildren = node.hasChildren();
-
-                    let toggleState = '';
-                    if ((!hasChildren && node.loadOnDemand) || (hasChildren && !node.state.open)) {
-                        toggleState = 'closed';
-                    }
-                    if (hasChildren && node.state.open) {
-                        toggleState = 'opened';
-                    }
-
-                    return renderTreeNode({ node, tree, toggleState });
-                }}
                 rowHeight={30}
                 loadNodes={(parentNode, done) => {
                     const suffix = parentNode.id.replace(/(\w)+/, '');
@@ -174,7 +161,21 @@ class Tree extends PureComponent {
                 onWillSelectNode={(node) => {
                     console.log('onWillSelectNode:', node);
                 }}
-            />
+            >
+                {({ node, tree }) => {
+                    const hasChildren = node.hasChildren();
+
+                    let toggleState = '';
+                    if ((!hasChildren && node.loadOnDemand) || (hasChildren && !node.state.open)) {
+                        toggleState = 'closed';
+                    }
+                    if (hasChildren && node.state.open) {
+                        toggleState = 'opened';
+                    }
+
+                    return renderTreeNode({ node, tree, toggleState });
+                }}
+            </InfiniteTree>
         );
     }
 }

@@ -1,4 +1,4 @@
-/*! react-infinite-tree v1.0.0-alpha.3 | (c) 2018 Cheton Wu <cheton@gmail.com> | MIT | https://github.com/cheton/react-infinite-tree */
+/*! react-infinite-tree v1.0.0-alpha.4 | (c) 2018 Cheton Wu <cheton@gmail.com> | MIT | https://github.com/cheton/react-infinite-tree */
 exports["InfiniteTree"] =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -718,7 +718,8 @@ var _class = function (_Component) {
                 onWillCloseNode = _props2.onWillCloseNode,
                 onWillSelectNode = _props2.onWillSelectNode,
                 style = _props2.style,
-                props = _objectWithoutProperties(_props2, ['autoOpen', 'selectable', 'tabIndex', 'data', 'width', 'height', 'rowHeight', 'rowRenderer', 'loadNodes', 'shouldSelectNode', 'scrollOffset', 'scrollToIndex', 'onScroll', 'onContentWillUpdate', 'onContentDidUpdate', 'onOpenNode', 'onCloseNode', 'onSelectNode', 'onWillOpenNode', 'onWillCloseNode', 'onWillSelectNode', 'style']);
+                children = _props2.children,
+                props = _objectWithoutProperties(_props2, ['autoOpen', 'selectable', 'tabIndex', 'data', 'width', 'height', 'rowHeight', 'rowRenderer', 'loadNodes', 'shouldSelectNode', 'scrollOffset', 'scrollToIndex', 'onScroll', 'onContentWillUpdate', 'onContentDidUpdate', 'onOpenNode', 'onCloseNode', 'onSelectNode', 'onWillOpenNode', 'onWillCloseNode', 'onWillSelectNode', 'style', 'children']);
 
             var render = typeof children === 'function' ? children : rowRenderer;
 

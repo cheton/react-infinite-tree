@@ -21948,20 +21948,100 @@ var Tree = function (_PureComponent) {
         value: function render() {
             var _this2 = this;
 
-            return _react2.default.createElement(_src2.default, {
-                ref: function ref(node) {
-                    _this2.tree = node ? node.tree : null;
+            return _react2.default.createElement(
+                _src2.default,
+                {
+                    ref: function ref(node) {
+                        _this2.tree = node ? node.tree : null;
+                    },
+                    style: {
+                        border: '1px solid #ccc'
+                    },
+                    autoOpen: true,
+                    selectable: true,
+                    tabIndex: 0,
+                    data: this.data,
+                    width: '100%',
+                    height: 400,
+                    rowHeight: 30,
+                    loadNodes: function loadNodes(parentNode, done) {
+                        var suffix = parentNode.id.replace(/(\w)+/, '');
+                        var nodes = [{
+                            id: 'node1' + suffix,
+                            name: 'Node 1'
+                        }, {
+                            id: 'node2' + suffix,
+                            name: 'Node 2'
+                        }];
+                        setTimeout(function () {
+                            done(null, nodes);
+                        }, 1000);
+                    },
+                    shouldSelectNode: function shouldSelectNode(node) {
+                        // Defaults to null
+                        if (!node || node === _this2.tree.getSelectedNode()) {
+                            return false; // Prevent from deselecting the current node
+                        }
+                        return true;
+                    },
+                    onKeyUp: function onKeyUp(event) {
+                        console.log('onKeyUp', event.target);
+                    },
+                    onKeyDown: function onKeyDown(event) {
+                        console.log('onKeyDown', event.target);
+
+                        event.preventDefault();
+
+                        var node = _this2.tree.getSelectedNode();
+                        var nodeIndex = _this2.tree.getSelectedIndex();
+
+                        if (event.keyCode === 37) {
+                            // Left
+                            _this2.tree.closeNode(node);
+                        } else if (event.keyCode === 38) {
+                            // Up
+                            var prevNode = _this2.tree.nodes[nodeIndex - 1] || node;
+                            _this2.tree.selectNode(prevNode);
+                        } else if (event.keyCode === 39) {
+                            // Right
+                            _this2.tree.openNode(node);
+                        } else if (event.keyCode === 40) {
+                            // Down
+                            var nextNode = _this2.tree.nodes[nodeIndex + 1] || node;
+                            _this2.tree.selectNode(nextNode);
+                        }
+                    },
+                    onScroll: function onScroll(scrollOffset, event) {
+                        console.log('onScroll', scrollOffset, event);
+                    },
+                    onContentWillUpdate: function onContentWillUpdate() {
+                        console.log('onContentWillUpdate');
+                    },
+                    onContentDidUpdate: function onContentDidUpdate() {
+                        console.log('onContentDidUpdate');
+                        _this2.props.onUpdate(_this2.tree.getSelectedNode());
+                    },
+                    onOpenNode: function onOpenNode(node) {
+                        console.log('onOpenNode:', node);
+                    },
+                    onCloseNode: function onCloseNode(node) {
+                        console.log('onCloseNode:', node);
+                    },
+                    onSelectNode: function onSelectNode(node) {
+                        console.log('onSelectNode:', node);
+                        _this2.props.onUpdate(node);
+                    },
+                    onWillOpenNode: function onWillOpenNode(node) {
+                        console.log('onWillOpenNode:', node);
+                    },
+                    onWillCloseNode: function onWillCloseNode(node) {
+                        console.log('onWillCloseNode:', node);
+                    },
+                    onWillSelectNode: function onWillSelectNode(node) {
+                        console.log('onWillSelectNode:', node);
+                    }
                 },
-                style: {
-                    border: '1px solid #ccc'
-                },
-                autoOpen: true,
-                selectable: true,
-                tabIndex: 0,
-                data: this.data,
-                width: '100%',
-                height: 400,
-                rowRenderer: function rowRenderer(_ref3) {
+                function (_ref3) {
                     var node = _ref3.node,
                         tree = _ref3.tree;
 
@@ -21976,85 +22056,8 @@ var Tree = function (_PureComponent) {
                     }
 
                     return renderTreeNode({ node: node, tree: tree, toggleState: toggleState });
-                },
-                rowHeight: 30,
-                loadNodes: function loadNodes(parentNode, done) {
-                    var suffix = parentNode.id.replace(/(\w)+/, '');
-                    var nodes = [{
-                        id: 'node1' + suffix,
-                        name: 'Node 1'
-                    }, {
-                        id: 'node2' + suffix,
-                        name: 'Node 2'
-                    }];
-                    setTimeout(function () {
-                        done(null, nodes);
-                    }, 1000);
-                },
-                shouldSelectNode: function shouldSelectNode(node) {
-                    // Defaults to null
-                    if (!node || node === _this2.tree.getSelectedNode()) {
-                        return false; // Prevent from deselecting the current node
-                    }
-                    return true;
-                },
-                onKeyUp: function onKeyUp(event) {
-                    console.log('onKeyUp', event.target);
-                },
-                onKeyDown: function onKeyDown(event) {
-                    console.log('onKeyDown', event.target);
-
-                    event.preventDefault();
-
-                    var node = _this2.tree.getSelectedNode();
-                    var nodeIndex = _this2.tree.getSelectedIndex();
-
-                    if (event.keyCode === 37) {
-                        // Left
-                        _this2.tree.closeNode(node);
-                    } else if (event.keyCode === 38) {
-                        // Up
-                        var prevNode = _this2.tree.nodes[nodeIndex - 1] || node;
-                        _this2.tree.selectNode(prevNode);
-                    } else if (event.keyCode === 39) {
-                        // Right
-                        _this2.tree.openNode(node);
-                    } else if (event.keyCode === 40) {
-                        // Down
-                        var nextNode = _this2.tree.nodes[nodeIndex + 1] || node;
-                        _this2.tree.selectNode(nextNode);
-                    }
-                },
-                onScroll: function onScroll(scrollOffset, event) {
-                    console.log('onScroll', scrollOffset, event);
-                },
-                onContentWillUpdate: function onContentWillUpdate() {
-                    console.log('onContentWillUpdate');
-                },
-                onContentDidUpdate: function onContentDidUpdate() {
-                    console.log('onContentDidUpdate');
-                    _this2.props.onUpdate(_this2.tree.getSelectedNode());
-                },
-                onOpenNode: function onOpenNode(node) {
-                    console.log('onOpenNode:', node);
-                },
-                onCloseNode: function onCloseNode(node) {
-                    console.log('onCloseNode:', node);
-                },
-                onSelectNode: function onSelectNode(node) {
-                    console.log('onSelectNode:', node);
-                    _this2.props.onUpdate(node);
-                },
-                onWillOpenNode: function onWillOpenNode(node) {
-                    console.log('onWillOpenNode:', node);
-                },
-                onWillCloseNode: function onWillCloseNode(node) {
-                    console.log('onWillCloseNode:', node);
-                },
-                onWillSelectNode: function onWillSelectNode(node) {
-                    console.log('onWillSelectNode:', node);
                 }
-            });
+            );
         }
     }]);
 
@@ -25561,7 +25564,8 @@ var _class = function (_Component) {
                 onWillCloseNode = _props2.onWillCloseNode,
                 onWillSelectNode = _props2.onWillSelectNode,
                 style = _props2.style,
-                props = _objectWithoutProperties(_props2, ['autoOpen', 'selectable', 'tabIndex', 'data', 'width', 'height', 'rowHeight', 'rowRenderer', 'loadNodes', 'shouldSelectNode', 'scrollOffset', 'scrollToIndex', 'onScroll', 'onContentWillUpdate', 'onContentDidUpdate', 'onOpenNode', 'onCloseNode', 'onSelectNode', 'onWillOpenNode', 'onWillCloseNode', 'onWillSelectNode', 'style']);
+                children = _props2.children,
+                props = _objectWithoutProperties(_props2, ['autoOpen', 'selectable', 'tabIndex', 'data', 'width', 'height', 'rowHeight', 'rowRenderer', 'loadNodes', 'shouldSelectNode', 'scrollOffset', 'scrollToIndex', 'onScroll', 'onContentWillUpdate', 'onContentDidUpdate', 'onOpenNode', 'onCloseNode', 'onSelectNode', 'onWillOpenNode', 'onWillCloseNode', 'onWillSelectNode', 'style', 'children']);
 
             var render = typeof children === 'function' ? children : rowRenderer;
 

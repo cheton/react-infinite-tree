@@ -1,4 +1,4 @@
-/*! react-infinite-tree v1.0.0-alpha.2 | (c) 2017 Cheton Wu <cheton@gmail.com> | MIT | https://github.com/cheton/react-infinite-tree */
+/*! react-infinite-tree v1.0.0-alpha.3 | (c) 2018 Cheton Wu <cheton@gmail.com> | MIT | https://github.com/cheton/react-infinite-tree */
 exports["InfiniteTree"] =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -732,7 +732,7 @@ var _class = function (_Component) {
             if (scrollToIndex !== undefined && scrollToIndex >= 0 && scrollToIndex < count) {
                 virtualListProps.scrollToIndex = scrollToIndex;
             }
-            if (typeof onScroll !== 'function') {
+            if (typeof onScroll === 'function') {
                 virtualListProps.onScroll = onScroll;
             }
 

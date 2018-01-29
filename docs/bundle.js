@@ -22012,6 +22012,9 @@ var Tree = function (_PureComponent) {
                         }
                     },
                     onScroll: function onScroll(scrollOffset, event) {
+                        var child = event.target.firstChild;
+                        var treeViewportHeight = 400;
+                        console.log((scrollOffset / (child.scrollHeight - treeViewportHeight) * 100).toFixed(2));
                         console.log('onScroll', scrollOffset, event);
                     },
                     onContentWillUpdate: function onContentWillUpdate() {

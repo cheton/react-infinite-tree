@@ -133,6 +133,9 @@ class Tree extends PureComponent {
                     }
                 }}
                 onScroll={(scrollOffset, event) => {
+                    const child = event.target.firstChild;
+                    const treeViewportHeight = 400;
+                    console.log((scrollOffset / (child.scrollHeight - treeViewportHeight) * 100).toFixed(2));
                     console.log('onScroll', scrollOffset, event);
                 }}
                 onContentWillUpdate={() => {

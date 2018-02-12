@@ -1,4 +1,4 @@
-/*! react-infinite-tree v1.0.0-alpha.4 | (c) 2018 Cheton Wu <cheton@gmail.com> | MIT | https://github.com/cheton/react-infinite-tree */
+/*! react-infinite-tree v1.0.0-alpha.5 | (c) 2018 Cheton Wu <cheton@gmail.com> | MIT | https://github.com/cheton/react-infinite-tree */
 exports["InfiniteTree"] =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache

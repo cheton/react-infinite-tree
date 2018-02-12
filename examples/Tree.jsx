@@ -1,3 +1,4 @@
+import Checkbox from '@trendmicro/react-checkbox';
 import Dropdown, { MenuItem } from '@trendmicro/react-dropdown';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
@@ -11,22 +12,41 @@ import Label from './components/Label';
 import Loading from './components/Loading';
 import { generate } from './tree-generator';
 
-const renderTreeNode = ({ node, tree, toggleState }) => (
+const renderTreeNode = ({ node, tree, toggleState, onUpdate }) => (
     <TreeNode
         selected={node.state.selected}
         depth={node.state.depth}
-        onClick={event => {
+        onClick={(event) => {
+            if (event.target.className.indexOf('checkbox---control-indicator') >= 0) {
+                // A workaround to avoid duplicate click events while clicking on the checkbox
+                event.stopPropagation();
+                return;
+            }
+
             tree.selectNode(node);
         }}
     >
         <Toggler
             state={toggleState}
-            onClick={() => {
+            onClick={(event) => {
+                event.stopPropagation();
+
                 if (toggleState === 'closed') {
                     tree.openNode(node);
                 } else if (toggleState === 'opened') {
                     tree.closeNode(node);
                 }
+            }}
+        />
+        <Checkbox
+            checked={node.state.checked}
+            indeterminate={node.state.indeterminate}
+            onClick={(event) => {
+                event.stopPropagation();
+            }}
+            onChange={(event) => {
+                tree.checkNode(node);
+                onUpdate(node);
             }}
         />
         <Clickable>
@@ -72,6 +92,8 @@ class Tree extends PureComponent {
         this.tree.selectNode(this.tree.getChildNodes()[0]);
     }
     render() {
+        const { onUpdate } = this.props;
+
         return (
             <InfiniteTree
                 ref={node => {
@@ -143,7 +165,7 @@ class Tree extends PureComponent {
                 }}
                 onContentDidUpdate={() => {
                     console.log('onContentDidUpdate');
-                    this.props.onUpdate(this.tree.getSelectedNode());
+                    onUpdate(this.tree.getSelectedNode());
                 }}
                 onOpenNode={(node) => {
                     console.log('onOpenNode:', node);
@@ -153,7 +175,7 @@ class Tree extends PureComponent {
                 }}
                 onSelectNode={(node) => {
                     console.log('onSelectNode:', node);
-                    this.props.onUpdate(node);
+                    onUpdate(node);
                 }}
                 onWillOpenNode={(node) => {
                     console.log('onWillOpenNode:', node);
@@ -176,7 +198,7 @@ class Tree extends PureComponent {
                         toggleState = 'opened';
                     }
 
-                    return renderTreeNode({ node, tree, toggleState });
+                    return renderTreeNode({ node, tree, toggleState, onUpdate });
                 }}
             </InfiniteTree>
         );

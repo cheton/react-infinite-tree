@@ -17,12 +17,6 @@ const renderTreeNode = ({ node, tree, toggleState, onUpdate }) => (
         selected={node.state.selected}
         depth={node.state.depth}
         onClick={(event) => {
-            if (event.target.className.indexOf('checkbox---control-indicator') >= 0) {
-                // A workaround to avoid duplicate click events while clicking on the checkbox
-                event.stopPropagation();
-                return;
-            }
-
             tree.selectNode(node);
         }}
     >

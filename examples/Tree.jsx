@@ -103,6 +103,9 @@ class Tree extends PureComponent {
                 width="100%"
                 height={400}
                 rowHeight={30}
+                shouldLoadNodes={(node) => {
+                    return !node.hasChildren() && node.loadOnDemand;
+                }}
                 loadNodes={(parentNode, done) => {
                     const suffix = parentNode.id.replace(/(\w)+/, '');
                     const nodes = [

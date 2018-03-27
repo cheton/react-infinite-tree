@@ -220,6 +220,7 @@ export default class extends Component {
             height,
             rowHeight,
             rowRenderer,
+            shouldLoadNodes,
             loadNodes,
             shouldSelectNode,
             scrollOffset,

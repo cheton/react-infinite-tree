@@ -195,6 +195,9 @@ export default class extends Component {
             this.eventHandlers[key] = this.props[key];
             this.tree.on(eventName, this.eventHandlers[key]);
         });
+
+        //force component to rerender when this.tree is finally initialized
+        this.forceUpdate();
     }
     componentWillUnmount() {
         Object.keys(this.eventHandlers).forEach(key => {

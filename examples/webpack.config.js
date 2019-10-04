@@ -1,10 +1,10 @@
-/* eslint no-var: 0 */
-var path = require('path');
-var webpack = require('webpack');
-var nib = require('nib');
-var stylusLoader = require('stylus-loader');
+const path = require('path');
+const webpack = require('webpack');
+const babelConfig = require('../babel.config');
 
 module.exports = {
+    mode: 'production',
+    target: 'web',
     devtool: 'source-map',
     entry: path.resolve(__dirname, 'index.js'),
     output: {
@@ -20,6 +20,7 @@ module.exports = {
             {
                 test: /\.jsx?$/,
                 loader: 'babel-loader',
+                options: babelConfig,
                 exclude: /node_modules/
             },
             {
@@ -27,7 +28,6 @@ module.exports = {
                 use: [
                     'style-loader',
                     'css-loader?camelCase&modules&importLoaders=1&localIdentName=[local]---[hash:base64:5]',
-                    'stylus-loader'
                 ]
             },
             {
@@ -59,14 +59,6 @@ module.exports = {
         new webpack.LoaderOptionsPlugin({
             debug: true
         }),
-        new stylusLoader.OptionsPlugin({
-            default: {
-                // nib - CSS3 extensions for Stylus
-                use: [nib()],
-                // no need to have a '@import "nib"' in the stylesheet
-                import: ['~nib/lib/nib/index.styl']
-            }
-        })
     ],
     resolve: {
         extensions: ['.js', '.json', '.jsx']

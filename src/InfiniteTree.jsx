@@ -10,6 +10,7 @@ const lcfirst = (str) => {
 
 export default class extends Component {
     static displayName = 'InfiniteTree';
+
     static propTypes = {
         // Whether to open all nodes when tree is loaded.
         autoOpen: PropTypes.bool,
@@ -87,6 +88,7 @@ export default class extends Component {
         // Callback invoked before selecting or deselecting a node.
         onWillSelectNode: PropTypes.func
     };
+
     static defaultProps = {
         autoOpen: false,
         selectable: true,
@@ -96,6 +98,9 @@ export default class extends Component {
     };
 
     tree = null;
+
+    virtualListRef = React.createRef();
+
     state = {
         nodes: []
     };
@@ -111,12 +116,16 @@ export default class extends Component {
         onWillSelectNode: null
     };
 
-    componentDidMount() {
-        const { children, className, style, ...options } = this.props;
+    constructor(props) {
+        super(props);
 
-        if (options.el !== undefined) {
-            delete options.el;
-        }
+        const {
+            children, // eslint-disable-line
+            className, // eslint-disable-line
+            style, // eslint-disable-line
+            el, // elint-disable-line
+            ...options
+        } = props;
 
         options.rowRenderer = () => '';
 
@@ -127,7 +136,10 @@ export default class extends Component {
         const treeFilter = this.tree.filter.bind(this.tree);
         this.tree.filter = (...args) => {
             setTimeout(() => {
-                this.virtualList.recomputeSizes(0);
+                const virtualList = this.virtualListRef.current;
+                if (virtualList) {
+                    virtualList.recomputeSizes(0);
+                }
             }, 0);
             return treeFilter(...args);
         };
@@ -137,7 +149,10 @@ export default class extends Component {
         const treeUnfilter = this.tree.unfilter.bind(this.tree);
         this.tree.unfilter = (...args) => {
             setTimeout(() => {
-                this.virtualList.recomputeSizes(0);
+                const virtualList = this.virtualListRef.current;
+                if (virtualList) {
+                    virtualList.recomputeSizes(0);
+                }
             }, 0);
             return treeUnfilter(...args);
         };
@@ -146,7 +161,9 @@ export default class extends Component {
         // @param {Node} node The Node object.
         // @return {boolean} Returns true on success, false otherwise.
         this.tree.scrollToNode = (node) => {
-            if (!this.tree || !this.virtualList) {
+            const virtualList = this.virtualListRef.current;
+
+            if (!this.tree || !virtualList) {
                 return false;
             }
 
@@ -155,8 +172,8 @@ export default class extends Component {
                 return false;
             }
 
-            const offset = this.virtualList.getOffsetForIndex(nodeIndex);
-            this.virtualList.scrollTo(offset);
+            const offset = virtualList.getOffsetForIndex(nodeIndex);
+            virtualList.scrollTo(offset);
 
             return true;
         };
@@ -165,15 +182,17 @@ export default class extends Component {
         // @param {number} [value] If the value is specified, indicates the new position to set the scroll bar to.
         // @return {number} Returns the vertical scroll position.
         this.tree.scrollTop = (value) => {
-            if (!this.tree || !this.virtualList) {
+            const virtualList = this.virtualListRef.current;
+
+            if (!this.tree || !virtualList) {
                 return;
             }
 
             if (value !== undefined) {
-                this.virtualList.scrollTo(Number(value));
+                virtualList.scrollTo(Number(value));
             }
 
-            return this.virtualList.getNodeOffset();
+            return virtualList.getNodeOffset();
         };
 
         // Updates the tree.
@@ -195,10 +214,8 @@ export default class extends Component {
             this.eventHandlers[key] = this.props[key];
             this.tree.on(eventName, this.eventHandlers[key]);
         });
-
-        //force component to rerender when this.tree is finally initialized
-        this.forceUpdate();
     }
+
     componentWillUnmount() {
         Object.keys(this.eventHandlers).forEach(key => {
             if (!this.eventHandlers[key]) {
@@ -213,6 +230,7 @@ export default class extends Component {
         this.tree.destroy();
         this.tree = null;
     }
+
     render() {
         const {
             autoOpen,
@@ -272,9 +290,7 @@ export default class extends Component {
                 tabIndex={tabIndex}
             >
                 <VirtualList
-                    ref={node => {
-                        this.virtualList = node;
-                    }}
+                    ref={this.virtualListRef}
                     width={width}
                     height={height}
                     itemCount={count}

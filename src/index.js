@@ -1,3 +1,3 @@
 import InfiniteTree from './InfiniteTree';
 
-module.exports = InfiniteTree;
+export default InfiniteTree;

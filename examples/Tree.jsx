@@ -1,7 +1,7 @@
 import Checkbox from '@trendmicro/react-checkbox';
 import Dropdown, { MenuItem } from '@trendmicro/react-dropdown';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import InfiniteTree from '../src';
 import TreeNode from './components/TreeNode';
 import Toggler from './components/Toggler';
@@ -73,26 +73,33 @@ const renderTreeNode = ({ node, tree, toggleState, onUpdate }) => (
     </TreeNode>
 );
 
-class Tree extends PureComponent {
+class Tree extends Component {
     static propTypes = {
         onUpdate: PropTypes.func
     };
 
+    treeRef = React.createRef();
     tree = null;
+
     data = generate(1000);
 
     componentDidMount() {
+        const { tree } = this.treeRef.current;
+
         // Select the first node
-        this.tree.selectNode(this.tree.getChildNodes()[0]);
+        tree.selectNode(tree.getChildNodes()[0]);
     }
+
     render() {
         const { onUpdate } = this.props;
 
+        if (this.treeRef.current) {
+            this.tree = this.treeRef.current.tree;
+        }
+
         return (
             <InfiniteTree
-                ref={node => {
-                    this.tree = node ? node.tree : null;
-                }}
+                ref={this.treeRef}
                 style={{
                     border: '1px solid #ccc'
                 }}
@@ -123,7 +130,9 @@ class Tree extends PureComponent {
                     }, 1000);
                 }}
                 shouldSelectNode={(node) => { // Defaults to null
-                    if (!node || (node === this.tree.getSelectedNode())) {
+                    const { tree } = this.treeRef.current;
+
+                    if (!node || (node === tree.getSelectedNode())) {
                         return false; // Prevent from deselecting the current node
                     }
                     return true;
@@ -132,23 +141,25 @@ class Tree extends PureComponent {
                     console.log('onKeyUp', event.target);
                 }}
                 onKeyDown={(event) => {
+                    const { tree } = this.treeRef.current;
+
                     console.log('onKeyDown', event.target);
 
                     event.preventDefault();
 
-                    const node = this.tree.getSelectedNode();
-                    const nodeIndex = this.tree.getSelectedIndex();
+                    const node = tree.getSelectedNode();
+                    const nodeIndex = tree.getSelectedIndex();
 
                     if (event.keyCode === 37) { // Left
-                        this.tree.closeNode(node);
+                        tree.closeNode(node);
                     } else if (event.keyCode === 38) { // Up
-                        const prevNode = this.tree.nodes[nodeIndex - 1] || node;
-                        this.tree.selectNode(prevNode);
+                        const prevNode = tree.nodes[nodeIndex - 1] || node;
+                        tree.selectNode(prevNode);
                     } else if (event.keyCode === 39) { // Right
-                        this.tree.openNode(node);
+                        tree.openNode(node);
                     } else if (event.keyCode === 40) { // Down
-                        const nextNode = this.tree.nodes[nodeIndex + 1] || node;
-                        this.tree.selectNode(nextNode);
+                        const nextNode = tree.nodes[nodeIndex + 1] || node;
+                        tree.selectNode(nextNode);
                     }
                 }}
                 onScroll={(scrollOffset, event) => {
@@ -161,8 +172,10 @@ class Tree extends PureComponent {
                     console.log('onContentWillUpdate');
                 }}
                 onContentDidUpdate={() => {
+                    const { tree } = this.treeRef.current;
+
                     console.log('onContentDidUpdate');
-                    onUpdate(this.tree.getSelectedNode());
+                    onUpdate(tree.getSelectedNode());
                 }}
                 onOpenNode={(node) => {
                     console.log('onOpenNode:', node);

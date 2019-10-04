@@ -8,9 +8,8 @@ os:
   - linux
 
 node_js:
-  - '6'
-  - '5'
-  - '4'
+  - '8'
+  - '10'
 
 before_install:
   - npm install -g npm

@@ -14,7 +14,8 @@ class App extends PureComponent {
     };
 
     textFilter = null;
-    tree = null;
+
+    treeRef = React.createRef();
 
     changeCheckedState = (key) => (event) => {
         const checked = event.target.checked;
@@ -25,18 +26,22 @@ class App extends PureComponent {
             this.filter();
         });
     };
+
     onUpdate = (node) => {
         this.setState({ node: node });
     };
+
     filter = (keyword) => {
-        if (!this.tree) {
+        const { tree } = this.treeRef.current;
+
+        if (!tree) {
             return;
         }
 
         keyword = keyword || this.textFilter.value || '';
 
         if (!keyword) {
-            this.tree.unfilter();
+            tree.unfilter();
             return;
         }
 
@@ -47,7 +52,7 @@ class App extends PureComponent {
             includeDescendants
         } = this.state;
 
-        this.tree.filter(keyword, {
+        tree.filter(keyword, {
             filterPath: 'name',
             caseSensitive: caseSensitive,
             exactMatch: exactMatch,
@@ -145,9 +150,7 @@ class App extends PureComponent {
                 <div className="row">
                     <div className="col-xs-6">
                         <Tree
-                            ref={c => {
-                                this.tree = c ? c.tree : null;
-                            }}
+                            ref={this.treeRef}
                             onUpdate={this.onUpdate}
                         />
                     </div>
